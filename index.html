@@ -382,32 +382,75 @@ function gvizDateToThai(val) {
 // ============================================================
 //  Fetch จาก Google Sheet
 // ============================================================
+// แมป column ตามตำแหน่ง (A=0, B=1, ...) ตรงกับ Sheet จริง
+// ถ้า column ในเปลี่ยนลำดับ ให้แก้ตรงนี้
+const COL = {
+  no:            0,   // A
+  company:       1,   // B
+  province:      2,   // C
+  branch:        3,   // D
+  sales:         4,   // E
+  contract_no:   5,   // F
+  new_used:      6,   // G
+  model:         7,   // H
+  mast:          8,   // I
+  forks:         9,   // J
+  tire:          10,  // K
+  accessories:   11,  // L
+  chassis_no:    12,  // M
+  engine_no:     13,  // N
+  car_no:        14,  // O
+  start:         15,  // P
+  end:           16,  // Q
+  work_hours:    17,  // R
+  tires_per_year:18,  // S
+  งวด:           19,  // T
+  price:         20,  // U
+  price_vat:     21,  // V
+};
+
+function getCell(row, idx) {
+  const cell = row.c?.[idx];
+  if (!cell || cell.v === null || cell.v === undefined) return '';
+  let v = cell.v;
+  // gviz ส่งวันที่เป็น Date(yyyy,m,d)
+  if (typeof v === 'string' && v.startsWith('Date(')) return gvizDateToThai(v);
+  // gviz อาจส่ง formatted string สำหรับวันที่ผ่าน cell.f
+  if (cell.f && typeof cell.f === 'string' && cell.f.includes('/')) return cell.f;
+  return String(v);
+}
+
 async function loadFromSheet() {
   const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(SHEET_NAME)}`;
   try {
     const res = await fetch(url);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const text = await res.text();
-    // ตัด wrapper: /*O_o*/\ngoogle.visualization.Query.setResponse({...});
     const jsonStr = text.replace(/^[\s\S]*?setResponse\(/, '').replace(/\);\s*$/, '');
     const json = JSON.parse(jsonStr);
 
-    const cols = json.table.cols.map(c => c.label.trim());
+    // DEBUG
+    const realCols = json.table.cols.map((c,i) => i+":"+c.label);
+    console.log("Columns:", realCols.join(" | "));
+    console.log("Row1:", JSON.stringify(json.table.rows?.[0]?.c?.map(c=>c?.v)));
+
     const RAW_DATA = (json.table.rows || [])
+      .filter((row, i) => i > 0 || !json.table.cols[0]?.label) // ข้าม header row ถ้ามี
       .filter(row => row.c && row.c.some(cell => cell?.v !== null && cell?.v !== ''))
-      .map(row => {
+      .map((row, idx) => {
         const obj = {};
-        cols.forEach((col, i) => {
-          let v = row.c?.[i]?.v ?? '';
-          if (typeof v === 'string' && v.startsWith('Date(')) v = gvizDateToThai(v);
-          obj[col] = v;
-        });
-        // คำนวณ days_left + expiry_cat ใหม่ทุกครั้ง (ข้อมูลสด)
-        const days = calcDaysLeft(String(obj['end'] || ''));
+        // map ทุก field ตามตำแหน่ง column
+        for (const [key, colIdx] of Object.entries(COL)) {
+          obj[key] = getCell(row, colIdx);
+        }
+        // เก็บ index สำหรับ openDetail
+        obj._idx = idx;
+        // คำนวณ days_left + expiry_cat ใหม่ทุกครั้ง
+        const days = calcDaysLeft(obj.end);
         obj.days_left  = days;
         obj.expiry_cat = calcExpiryCat(days);
-        obj.price  = Number(obj['price'])  || 0;
-        obj['งวด'] = Number(obj['งวด'])    || 0;
+        obj.price  = Number(String(obj.price).replace(/,/g,''))  || 0;
+        obj['งวด'] = Number(String(obj['งวด']).replace(/,/g,'')) || 0;
         return obj;
       });
 
@@ -564,7 +607,7 @@ function renderTable() {
   const start = (currentPage-1)*pageSize;
   const page  = filteredData.slice(start, start+pageSize);
   document.getElementById('tableBody').innerHTML = page.map(d => `
-    <tr class="clickable" onclick="openDetail(${RAW_DATA.indexOf(d)})">
+    <tr class="clickable" onclick="openDetail(${d._idx})">
       <td>${d.no}</td>
       <td><div class="company-text"><span class="company-link">${d.company}</span></div></td>
       <td>${d.province}</td>
@@ -604,7 +647,7 @@ document.getElementById('filterModel').addEventListener('change',    applyFilter
 
 // ---- Detail Page ----
 function openDetail(idx) {
-  const d = RAW_DATA[idx];
+  const d = RAW_DATA.find(r => r._idx === idx);
   const isReserve = d.contract_no === 'รถสำรองใช้งาน';
 
   document.getElementById('detail-header-title').textContent = d.company;
