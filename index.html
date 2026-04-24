@@ -3,104 +3,97 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dashboard ตารางรายการรถเช่า</title>
+<title>Dashboard รายการรถเช่า - สาขาหาดใหญ่</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
-  /* CSS เดิมทั้งหมดคงไว้ (ตัดออกเพื่อประหยัดพื้นที่ แต่ในไฟล์จริงต้องมีนะครับ) */
+  /* --- CSS ส่วนเดิมที่ปรับปรุงให้รองรับมือถือ --- */
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: 'Segoe UI', Tahoma, sans-serif; background: #0f172a; color: #e2e8f0; min-height: 100vh; }
-  header { background: linear-gradient(135deg, #f5f5f0 0%, #ffffff 60%, #eef2ff 100%); padding: 14px 32px; display: flex; align-items: center; gap: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); border-bottom: 3px solid #1e40af; }
-  header h1 { font-size: 22px; font-weight: 700; color: #1e3a8a; }
-  header p { font-size: 13px; color: #3b82f6; }
-  .main { padding: 24px 28px; }
-  .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 24px; }
-  .kpi-card { background: #1e293b; border-radius: 12px; padding: 18px 20px; border: 1px solid #334155; position: relative; }
-  .kpi-card .accent { position: absolute; top: 0; left: 0; width: 4px; height: 100%; border-radius: 12px 0 0 12px; }
-  .kpi-card .label { font-size: 12px; color: #94a3b8; text-transform: uppercase; margin-bottom: 8px; }
-  .kpi-card .value { font-size: 28px; font-weight: 800; }
-  .kpi-blue .accent { background: #3b82f6; } .kpi-blue .value { color: #60a5fa; }
-  .kpi-green .accent { background: #22c55e; } .kpi-green .value { color: #4ade80; }
-  .kpi-purple .accent { background: #a855f7; } .kpi-purple .value { color: #c084fc; }
-  .kpi-red .accent { background: #ef4444; } .kpi-red .value { color: #f87171; }
-  .kpi-yellow .accent { background: #f59e0b; } .kpi-yellow .value { color: #fbbf24; }
-  .charts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 20px; margin-bottom: 24px; }
-  .chart-card { background: #1e293b; border-radius: 12px; padding: 20px; border: 1px solid #334155; }
-  .alert-box { background: #431407; border: 1px solid #dc2626; border-radius: 10px; padding: 14px 20px; display: flex; gap: 12px; margin-bottom: 10px; }
-  .alert-box.warn { background: #451a03; border-color: #d97706; }
+  header { background: #ffffff; padding: 15px 25px; display: flex; align-items: center; gap: 15px; border-bottom: 4px solid #1e40af; color: #1e3a8a; }
+  .main { padding: 20px; }
+  
+  /* KPI */
+  .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-bottom: 25px; }
+  .kpi-card { background: #1e293b; border-radius: 12px; padding: 20px; border: 1px solid #334155; border-left: 5px solid #3b82f6; }
+  .kpi-card .label { font-size: 12px; color: #94a3b8; margin-bottom: 5px; }
+  .kpi-card .value { font-size: 24px; font-weight: 800; color: #fff; }
+
+  /* Table */
   .table-section { background: #1e293b; border-radius: 12px; border: 1px solid #334155; overflow: hidden; }
-  .table-header { padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155; }
-  .filters select, .filters input { background: #0f172a; color: #e2e8f0; border: 1px solid #475569; border-radius: 8px; padding: 7px 12px; font-size: 12px; }
   table { width: 100%; border-collapse: collapse; font-size: 13px; }
-  th { background: #0f172a; color: #64748b; padding: 10px 14px; text-align: left; }
-  td { padding: 10px 14px; border-bottom: 1px solid #1e293b; color: #cbd5e1; }
-  .badge { display: inline-block; padding: 3px 9px; border-radius: 20px; font-size: 11px; font-weight: 600; }
-  .badge-new { background: #1d4ed8; color: #bfdbfe; }
-  .badge-used { background: #374151; color: #9ca3af; }
-  .badge-expired { background: #450a0a; color: #fca5a5; border: 1px solid #dc2626; }
-  .badge-soon3 { background: #451a03; color: #fcd34d; border: 1px solid #d97706; }
-  .badge-ok { background: #052e16; color: #86efac; }
-  #detailPage { display: none; position: fixed; inset: 0; z-index: 100; background: #0f172a; overflow-y: auto; }
+  th { background: #0f172a; color: #64748b; padding: 12px; text-align: left; }
+  td { padding: 12px; border-bottom: 1px solid #0f172a; }
+  tr.clickable:hover { background: #2d3748; cursor: pointer; }
+
+  /* Detail Page Overlay */
+  #detailPage { 
+    display: none; position: fixed; inset: 0; z-index: 1000; 
+    background: #0f172a; overflow-y: auto; padding-bottom: 50px;
+  }
   #detailPage.active { display: block; }
-  .detail-header { background: #1e3a8a; padding: 16px 24px; display: flex; align-items: center; gap: 14px; position: sticky; top: 0; }
-  .btn-back { background: rgba(255,255,255,0.2); border: none; color: #fff; padding: 8px 16px; border-radius: 8px; cursor: pointer; }
+  .detail-header { 
+    background: #1e40af; padding: 15px 20px; display: flex; 
+    align-items: center; gap: 15px; position: sticky; top: 0; 
+  }
+  .btn-back { 
+    background: rgba(255,255,255,0.2); border: none; color: #fff; 
+    padding: 8px 15px; border-radius: 6px; cursor: pointer; font-weight: bold;
+  }
+  .detail-content { max-width: 800px; margin: 20px auto; padding: 0 20px; }
+  .info-box { 
+    background: #1e293b; border-radius: 12px; padding: 20px; 
+    margin-bottom: 15px; border: 1px solid #334155; 
+  }
+  .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+  .info-item label { font-size: 11px; color: #64748b; display: block; text-transform: uppercase; }
+  .info-item span { font-size: 15px; color: #e2e8f0; font-weight: 500; }
+  
+  .badge { padding: 3px 8px; border-radius: 10px; font-size: 11px; font-weight: bold; }
+  .badge-expired { background: #7f1d1d; color: #fca5a5; }
+  .badge-ok { background: #064e3b; color: #6ee7b7; }
 </style>
 </head>
 <body>
 
 <header>
-  <div style="flex:1">
-    <h1>Dashboard รายการรถเช่า</h1>
-    <p id="today-date">กำลังโหลดข้อมูล...</p>
-  </div>
+  <div style="font-weight: 800; font-size: 20px;">KOMATSU FORKLIFT</div>
+  <div style="flex:1; text-align: right; font-size: 12px;" id="last-update"></div>
 </header>
 
 <div id="detailPage">
   <div class="detail-header">
-    <button class="btn-back" onclick="closDetail()">← กลับ</button>
-    <div id="detail-header-title" style="color:white; font-weight:bold;"></div>
+    <button class="btn-back" onclick="closeDetail()">← ย้อนกลับ</button>
+    <div id="detail-title" style="font-weight:bold; font-size: 16px;"></div>
   </div>
-  <div id="detail-body" style="padding:20px;"></div>
+  <div class="detail-content" id="detail-content">
+    </div>
 </div>
 
 <div class="main">
   <div class="kpi-grid">
-    <div class="kpi-card kpi-blue"><div class="accent"></div><div class="label">รถทั้งหมด</div><div class="value" id="kpi-total">–</div></div>
-    <div class="kpi-card kpi-green"><div class="accent"></div><div class="label">รายได้รวม/เดือน</div><div class="value" id="kpi-revenue">–</div></div>
-    <div class="kpi-card kpi-purple"><div class="accent"></div><div class="label">ราคาเฉลี่ย</div><div class="value" id="kpi-avg">–</div></div>
-    <div class="kpi-card kpi-red"><div class="accent"></div><div class="label">หมดสัญญา</div><div class="value" id="kpi-expired">–</div></div>
-    <div class="kpi-card kpi-yellow"><div class="accent"></div><div class="label">ใกล้หมด (3ด.)</div><div class="value" id="kpi-soon3">–</div></div>
-  </div>
-
-  <div id="alert-section"></div>
-
-  <div class="charts-grid">
-    <div class="chart-card"><h3>🗺️ รายได้รายจังหวัด</h3><canvas id="chartProvince"></canvas></div>
-    <div class="chart-card"><h3>⏳ สถานะสัญญา</h3><canvas id="chartExpiry"></canvas></div>
+    <div class="kpi-card"><div class="label">จำนวนรถทั้งหมด</div><div class="value" id="kpi-total">0</div></div>
+    <div class="kpi-card" style="border-left-color: #10b981;"><div class="label">รายได้รวม/เดือน</div><div class="value" id="kpi-revenue">0</div></div>
+    <div class="kpi-card" style="border-left-color: #ef4444;"><div class="label">หมดสัญญา</div><div class="value" id="kpi-expired">0</div></div>
   </div>
 
   <div class="table-section">
-    <div class="table-header">
-      <h3>📋 รายการทั้งหมด</h3>
-      <div class="filters">
-        <input type="text" id="searchInput" placeholder="ค้นหาบริษัท...">
-        <select id="filterProvince"><option value="">ทุกจังหวัด</option></select>
-      </div>
+    <div style="padding: 15px; background: #1e293b; border-bottom: 1px solid #334155;">
+      <input type="text" id="search" placeholder="🔍 ค้นหาชื่อบริษัท..." oninput="filterTable()" 
+             style="width:100%; padding:10px; border-radius:8px; border:1px solid #334155; background:#0f172a; color:#fff;">
     </div>
-    <div style="overflow-x:auto">
-      <table>
+    <div style="overflow-x: auto;">
+      <table id="mainTable">
         <thead>
           <tr>
             <th>#</th>
             <th>บริษัท</th>
-            <th>จังหวัด</th>
             <th>รุ่น</th>
-            <th>สถานะ</th>
             <th>วันหมดสัญญา</th>
-            <th>คงเหลือ</th>
-            <th>ราคา/เดือน</th>
+            <th>สถานะ</th>
           </tr>
         </thead>
-        <tbody id="tableBody"></tbody>
+        <tbody id="tableBody">
+          </tbody>
       </table>
     </div>
   </div>
@@ -109,136 +102,140 @@
 <script>
 const SHEET_ID = '1iFWpgZBXHa93M6iTlI5Xce4jTJVEy374tBDtHMKyCZI';
 const SHEET_NAME = 'Sheet1';
+let RAW_DATA = [];
 
-// ฟังก์ชันคำนวณวันคงเหลือ
-function calcDaysLeft(endStr) {
-  if (!endStr) return null;
-  let d = new Date(endStr);
-  if (isNaN(d)) {
-    const parts = endStr.split('/');
-    if(parts.length === 3) d = new Date(`${parts[2]}-${parts[1]}-${parts[0]}`);
-  }
-  if (isNaN(d)) return null;
-  const today = new Date(); today.setHours(0,0,0,0);
-  return Math.round((d - today) / 86400000);
-}
-
-function getExpiryCat(days) {
-  if (days === null) return 'ไม่ระบุ';
-  if (days < 0) return 'หมดสัญญาแล้ว';
-  if (days <= 90) return 'ภายใน 3 เดือน';
-  return 'ปกติ';
-}
-
-// ดึงค่าจาก Cell ของ Google Sheet
-function cellVal(row, idx) {
-  const cell = row.c?.[idx];
-  if (!cell) return '';
-  return cell.f ? cell.f : String(cell.v || '');
-}
-
-async function loadFromSheet() {
+async function fetchData() {
   const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(SHEET_NAME)}`;
   try {
     const res = await fetch(url);
     const text = await res.text();
     const json = JSON.parse(text.substring(47, text.length - 2));
     
+    // ดึงหัวตาราง
     const cols = json.table.cols.map(c => c.label.toLowerCase().trim());
-    const rows = json.table.rows.map((row, rIdx) => {
-      let item = { _idx: rIdx };
-      cols.forEach((col, cIdx) => {
-        let val = cellVal(row, cIdx);
-        item[col || `col_${cIdx}`] = val;
+    
+    // แปลงแถวเป็น Object
+    RAW_DATA = json.table.rows.map((row, index) => {
+      let obj = { _idx: index };
+      row.c.forEach((cell, i) => {
+        let val = cell ? (cell.f ? cell.f : cell.v) : '';
+        obj[cols[i] || `col${i}`] = val;
       });
-      
-      // คำนวณเพิ่มเติม
-      item.days_left = calcDaysLeft(item.end);
-      item.expiry_cat = getExpiryCat(item.days_left);
-      item.price_num = Number(String(item.price || '0').replace(/[^0-9.-]+/g,""));
-      return item;
+      return obj;
     });
 
-    renderDashboard(rows);
-    document.getElementById('today-date').textContent = `ข้อมูล ณ วันที่ ${new Date().toLocaleDateString('th-TH')}`;
+    renderTable(RAW_DATA);
+    updateKPIs(RAW_DATA);
+    document.getElementById('last-update').innerText = 'อัปเดต: ' + new Date().toLocaleDateString('th-TH');
   } catch (e) {
-    console.error(e);
-    alert("ไม่สามารถโหลดข้อมูลได้ กรุณาตรวจสอบการแชร์ไฟล์ Google Sheet");
+    console.error("Error:", e);
+    alert("โหลดข้อมูลไม่สำเร็จ กรุณาเช็คการแชร์ไฟล์ Google Sheet");
   }
 }
 
-function renderDashboard(data) {
-  // KPIs
-  const total = data.length;
-  const revenue = data.reduce((sum, row) => sum + row.price_num, 0);
-  const expired = data.filter(d => d.expiry_cat === 'หมดสัญญาแล้ว').length;
-  const soon3 = data.filter(d => d.expiry_cat === 'ภายใน 3 เดือน').length;
+function updateKPIs(data) {
+  document.getElementById('kpi-total').innerText = data.length;
+  const revenue = data.reduce((sum, item) => sum + (Number(String(item.price).replace(/,/g, '')) || 0), 0);
+  document.getElementById('kpi-revenue').innerText = revenue.toLocaleString() + ' ฿';
+  
+  const today = new Date();
+  const expiredCount = data.filter(item => {
+    const end = new Date(item.end);
+    return end < today;
+  }).length;
+  document.getElementById('kpi-expired').innerText = expiredCount;
+}
 
-  document.getElementById('kpi-total').textContent = total;
-  document.getElementById('kpi-revenue').textContent = revenue.toLocaleString();
-  document.getElementById('kpi-avg').textContent = Math.round(revenue / total).toLocaleString();
-  document.getElementById('kpi-expired').textContent = expired;
-  document.getElementById('kpi-soon3').textContent = soon3;
-
-  // Table Render
+function renderTable(data) {
   const tbody = document.getElementById('tableBody');
-  tbody.innerHTML = data.map(d => `
-    <tr onclick="openDetail(${d._idx})" style="cursor:pointer">
-      <td>${d.no || ''}</td>
-      <td style="color:#60a5fa">${d.company || ''}</td>
-      <td>${d.province || ''}</td>
-      <td>${d.model || ''}</td>
-      <td><span class="badge ${d.expiry_cat==='หมดสัญญาแล้ว'?'badge-expired':d.expiry_cat==='ภายใน 3 เดือน'?'badge-soon3':'badge-ok'}">${d.expiry_cat}</span></td>
-      <td>${d.end || ''}</td>
-      <td style="color:${d.days_left < 0 ? '#f87171' : '#4ade80'}">${d.days_left ?? '-'} วัน</td>
-      <td style="color:#a78bfa">${(d.price_num || 0).toLocaleString()}</td>
-    </tr>
-  `).join('');
-
-  // Charts
-  renderCharts(data);
+  tbody.innerHTML = data.map(item => {
+    const days = calculateDays(item.end);
+    const statusClass = days < 0 ? 'badge-expired' : 'badge-ok';
+    const statusText = days < 0 ? 'หมดสัญญา' : 'ปกติ';
+    
+    return `
+      <tr class="clickable" onclick="openDetail(${item._idx})">
+        <td>${item.no || ''}</td>
+        <td style="color:#60a5fa; font-weight:bold;">${item.company || ''}</td>
+        <td><code>${item.model || ''}</code></td>
+        <td>${item.end || ''}</td>
+        <td><span class="badge ${statusClass}">${statusText}</span></td>
+      </tr>
+    `;
+  }).join('');
 }
 
-function renderCharts(data) {
-  const provCtx = document.getElementById('chartProvince').getContext('2d');
-  const expCtx = document.getElementById('chartExpiry').getContext('2d');
-
-  // Province Data
-  const provMap = {};
-  data.forEach(d => { provMap[d.province] = (provMap[d.province] || 0) + d.price_num; });
-
-  new Chart(provCtx, {
-    type: 'bar',
-    data: {
-      labels: Object.keys(provMap),
-      datasets: [{ label: 'รายได้/จังหวัด', data: Object.values(provMap), backgroundColor: '#3b82f6' }]
-    },
-    options: { responsive: true, scales: { y: { grid: { color: '#334155' } } } }
-  });
-
-  // Expiry Data
-  const expMap = { 'ปกติ': 0, 'ภายใน 3 เดือน': 0, 'หมดสัญญาแล้ว': 0 };
-  data.forEach(d => { if(expMap[d.expiry_cat] !== undefined) expMap[d.expiry_cat]++; });
-
-  new Chart(expCtx, {
-    type: 'doughnut',
-    data: {
-      labels: Object.keys(expMap),
-      datasets: [{ data: Object.values(expMap), backgroundColor: ['#22c55e', '#f59e0b', '#ef4444'] }]
-    }
-  });
+function calculateDays(dateStr) {
+  if(!dateStr) return 0;
+  const end = new Date(dateStr);
+  const today = new Date();
+  today.setHours(0,0,0,0);
+  return Math.round((end - today) / (1000 * 60 * 60 * 24));
 }
 
+// --- ฟังก์ชันกดแล้วไปหน้าข้อมูล (ที่แก้ไขใหม่) ---
 function openDetail(idx) {
-  // ฟังก์ชันแสดงรายละเอียด (ปรับแต่งเพิ่มได้)
+  const d = RAW_DATA.find(item => item._idx === idx);
+  if (!d) return;
+
+  // เขียนชื่อบริษัทที่หัวข้อ
+  document.getElementById('detail-title').innerText = d.company || 'รายละเอียด';
+
+  // เขียนเนื้อหาลงในหน้ารายละเอียด
+  document.getElementById('detail-content').innerHTML = `
+    <div class="info-box" style="border-left: 5px solid #60a5fa;">
+      <h3 style="margin-bottom:15px; color:#60a5fa;">🏢 ข้อมูลลูกค้าและสัญญา</h3>
+      <div class="info-grid">
+        <div class="info-item"><label>ชื่อบริษัท</label><span>${d.company || '-'}</span></div>
+        <div class="info-item"><label>จังหวัด</label><span>${d.province || '-'}</span></div>
+        <div class="info-item"><label>เลขที่สัญญา</label><span>${d.contract_no || '-'}</span></div>
+        <div class="info-item"><label>จำนวนงวด</label><span>${d.งวด || '-'} งวด</span></div>
+        <div class="info-item"><label>วันเริ่มสัญญา</label><span>${d.start || '-'}</span></div>
+        <div class="info-item"><label>วันสิ้นสุดสัญญา</label><span style="color:#f87171; font-weight:bold;">${d.end || '-'}</span></div>
+      </div>
+    </div>
+
+    <div class="info-box" style="border-left: 5px solid #fbbf24;">
+      <h3 style="margin-bottom:15px; color:#fbbf24;">🚜 รายละเอียดตัวรถ</h3>
+      <div class="info-grid">
+        <div class="info-item"><label>รุ่น (Model)</label><span>${d.model || '-'}</span></div>
+        <div class="info-item"><label>เบอร์รถ (Car No.)</label><span style="font-size:18px; color:#fff;">${d.car_no || '-'}</span></div>
+        <div class="info-item"><label>ประเภท</label><span>${d.new_used || '-'}</span></div>
+        <div class="info-item"><label>อุปกรณ์เสริม</label><span>${d.accessories || '-'}</span></div>
+        <div class="info-item"><label>เลขตัวถัง</label><span>${d.chassis_no || '-'}</span></div>
+        <div class="info-item"><label>เลขเครื่อง</label><span>${d.engine_no || '-'}</span></div>
+      </div>
+    </div>
+
+    <div class="info-box" style="border-left: 5px solid #10b981;">
+      <h3 style="margin-bottom:15px; color:#10b981;">💰 ข้อมูลการเงิน</h3>
+      <div class="info-grid">
+        <div class="info-item"><label>ราคาเช่า/เดือน</label><span style="font-size:20px; color:#10b981; font-weight:bold;">${Number(String(d.price).replace(/,/g,'')).toLocaleString()} ฿</span></div>
+        <div class="info-item"><label>สถานะวันคงเหลือ</label><span>${calculateDays(d.end)} วัน</span></div>
+      </div>
+    </div>
+  `;
+
+  // แสดงหน้า Detail
   document.getElementById('detailPage').classList.add('active');
+  window.scrollTo(0,0);
 }
 
-function closDetail() {
+function closeDetail() {
   document.getElementById('detailPage').classList.remove('active');
 }
 
-loadFromSheet();
+function filterTable() {
+  const val = document.getElementById('search').value.toLowerCase();
+  const filtered = RAW_DATA.filter(item => 
+    (item.company || '').toLowerCase().includes(val) || 
+    (item.car_no || '').toLowerCase().includes(val)
+  );
+  renderTable(filtered);
+}
+
+// เริ่มโหลดข้อมูล
+fetchData();
 </script>
 </body>
 </html>
