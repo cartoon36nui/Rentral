@@ -358,17 +358,32 @@ function cellVal(row, idx) {
 
 function calcDaysLeft(endVal) {
   if (!endVal && endVal !== 0) return null;
-  let d;
   const s = String(endVal).trim();
   if (!s) return null;
-  // รูปแบบ dd/mm/yyyy
-  const p = s.split('/');
-  if (p.length === 3) {
+  let d;
+  const MONTHS = {jan:1,feb:2,mar:3,apr:4,may:5,jun:6,jul:7,aug:8,sep:9,oct:10,nov:11,dec:12};
+  if (s.includes('/')) {
+    // dd/mm/yyyy
+    const p = s.split('/');
     d = new Date(`${p[2].trim()}-${p[1].trim().padStart(2,'0')}-${p[0].trim().padStart(2,'0')}`);
+  } else if (s.includes('-')) {
+    const p = s.split('-');
+    if (p.length === 3) {
+      const monthKey = p[1].toLowerCase().substring(0,3);
+      if (MONTHS[monthKey]) {
+        // dd-Mon-yyyy (เช่น 10-Jan-2026)
+        d = new Date(`${p[2].trim()}-${String(MONTHS[monthKey]).padStart(2,'0')}-${p[0].trim().padStart(2,'0')}`);
+      } else if (p[0].length === 4) {
+        // yyyy-mm-dd
+        d = new Date(s);
+      } else {
+        d = new Date(s);
+      }
+    }
   } else {
     d = new Date(s);
   }
-  if (isNaN(d)) return null;
+  if (!d || isNaN(d)) return null;
   const today = new Date(); today.setHours(0,0,0,0);
   return Math.round((d - today) / 86400000);
 }
@@ -436,6 +451,7 @@ async function loadFromSheet() {
 //  Dashboard หลัก (รับ RAW_DATA จาก Sheet)
 // ============================================================
 function initDashboard(RAW_DATA) {
+  _GLOBAL_RAW_DATA = RAW_DATA;  // expose for openDetail
 
 // Exclude reserve cars from main stats
 const DATA = RAW_DATA.filter(d => d.contract_no !== 'รถสำรองใช้งาน');
@@ -600,8 +616,15 @@ document.getElementById('filterProvince').addEventListener('change', applyFilter
 document.getElementById('filterExpiry').addEventListener('change', applyFilters);
 document.getElementById('filterModel').addEventListener('change', applyFilters);
 
+}  // end initDashboard
+
+// ============================================================
+//  Global functions — must be outside initDashboard for onclick
+// ============================================================
+let _GLOBAL_RAW_DATA = [];  // set by initDashboard
+
 function openDetail(idx) {
-  const d = RAW_DATA.find(r => r._idx === idx);
+  const d = _GLOBAL_RAW_DATA.find(r => r._idx === idx);
   const isReserve = d.contract_no === 'รถสำรองใช้งาน';
 
   // Header
@@ -801,7 +824,6 @@ document.addEventListener('keydown', e => { if(e.key==='Escape') closDetail(); }
 
 populateFilters();
 renderTable();
-} // end initDashboard
 
 loadFromSheet();
 </script>
