@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dashboard ตารางรายการรถเช่า 5555</title>
+<title>Dashboard ตารางรายการรถเช่า</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: 'Segoe UI', Tahoma, sans-serif; background: #0f172a; color: #e2e8f0; min-height: 100vh; }
- 
+
   header {
     background: linear-gradient(135deg, #f5f5f0 0%, #ffffff 60%, #eef2ff 100%);
     padding: 14px 32px;
@@ -19,9 +19,9 @@
   header .icon { font-size: 36px; }
   header h1 { font-size: 22px; font-weight: 700; color: #1e3a8a; letter-spacing: 0.5px; }
   header p { font-size: 13px; color: #3b82f6; margin-top: 2px; }
- 
+
   .main { padding: 24px 28px; }
- 
+
   /* KPI Cards */
   .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 24px; }
   .kpi-card {
@@ -42,7 +42,7 @@
   .kpi-yellow .accent { background: #f59e0b; } .kpi-yellow .value { color: #fbbf24; }
   .kpi-red .accent { background: #ef4444; } .kpi-red .value { color: #f87171; }
   .kpi-purple .accent { background: #a855f7; } .kpi-purple .value { color: #c084fc; }
- 
+
   /* Charts */
   .charts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 20px; margin-bottom: 24px; }
   .chart-card {
@@ -53,7 +53,7 @@
   }
   .chart-card h3 { font-size: 14px; font-weight: 600; color: #cbd5e1; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
   .chart-card canvas { max-height: 240px; }
- 
+
   /* Alert bar */
   .alert-section { margin-bottom: 24px; }
   .alert-box {
@@ -69,7 +69,7 @@
   .alert-title { font-size: 14px; font-weight: 700; color: #fca5a5; }
   .alert-box.warn .alert-title { color: #fcd34d; }
   .alert-list { margin-top: 6px; font-size: 12px; color: #94a3b8; line-height: 1.6; }
- 
+
   /* Table */
   .table-section { background: #1e293b; border-radius: 12px; border: 1px solid #334155; overflow: hidden; }
   .table-header { padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155; flex-wrap: wrap; gap: 12px; }
@@ -106,12 +106,12 @@
   }
   .pag-btns button:hover, .pag-btns button.active { background: #3b82f6; color: #fff; border-color: #3b82f6; }
   .pag-btns button:disabled { opacity: 0.3; cursor: not-allowed; }
- 
+
   .days-pill { font-size: 11px; font-weight: 500; }
   .days-negative { color: #f87171; }
   .days-warn { color: #fbbf24; }
   .days-ok { color: #4ade80; }
- 
+
   /* Clickable row */
   tr.clickable { cursor: pointer; }
   tr.clickable td .company-link {
@@ -119,7 +119,7 @@
     transition: color 0.15s;
   }
   tr.clickable:hover td .company-link { color: #93c5fd; text-decoration: underline; }
- 
+
   /* Detail Page */
   #detailPage {
     display: none;
@@ -133,7 +133,7 @@
     from { transform: translateX(40px); opacity: 0; }
     to   { transform: translateX(0);    opacity: 1; }
   }
- 
+
   .detail-header {
     background: linear-gradient(135deg, #1e3a8a, #2563eb);
     padding: 16px 24px;
@@ -141,22 +141,11 @@
     position: sticky; top: 0; z-index: 10;
     box-shadow: 0 4px 16px rgba(0,0,0,0.4);
   }
-  .btn-back {
-    background: rgba(255,255,255,0.15);
-    border: 1px solid rgba(255,255,255,0.3);
-    color: #fff; border-radius: 8px;
-    padding: 8px 16px; cursor: pointer;
-    font-size: 14px; font-weight: 600;
-    display: flex; align-items: center; gap: 6px;
-    transition: background 0.2s;
-    white-space: nowrap;
-  }
-  .btn-back:hover { background: rgba(255,255,255,0.25); }
   .detail-header-title { font-size: 16px; font-weight: 700; color: #fff; }
   .detail-header-sub { font-size: 12px; color: #93c5fd; margin-top: 2px; }
- 
+
   .detail-body { padding: 24px; max-width: 800px; margin: 0 auto; }
- 
+
   .detail-status-bar {
     border-radius: 10px; padding: 14px 20px;
     margin-bottom: 24px; display: flex; align-items: center; gap: 12px;
@@ -174,7 +163,7 @@
   .detail-status-bar.ok      .detail-status-text { color: #86efac; }
   .detail-status-bar.reserve .detail-status-text { color: #94a3b8; }
   .detail-status-sub { font-size: 12px; color: #94a3b8; margin-top: 3px; }
- 
+
   .detail-section { background: #1e293b; border-radius: 12px; border: 1px solid #334155; padding: 20px; margin-bottom: 16px; }
   .detail-section-title { font-size: 12px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.7px; margin-bottom: 16px; padding-bottom: 10px; border-bottom: 1px solid #334155; }
   .detail-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; }
@@ -183,13 +172,13 @@
   .detail-field .field-value { font-size: 15px; color: #e2e8f0; font-weight: 500; }
   .field-value.highlight { color: #a78bfa; font-size: 20px; font-weight: 800; }
   .field-value.company-name { color: #60a5fa; font-size: 16px; line-height: 1.4; }
- 
+
   /* Progress bar for contract period */
   .progress-wrap { margin-top: 16px; }
   .progress-label { display: flex; justify-content: space-between; font-size: 11px; color: #64748b; margin-bottom: 6px; }
   .progress-bar { height: 8px; background: #0f172a; border-radius: 8px; overflow: hidden; }
   .progress-fill { height: 100%; border-radius: 8px; transition: width 0.6s ease; }
- 
+
   @media (max-width: 768px) {
     .main { padding: 14px; }
     .kpi-grid { grid-template-columns: repeat(2, 1fr); }
@@ -202,7 +191,7 @@
 </style>
 </head>
 <body>
- 
+
 <header>
   <img src="logo.jpg" alt="Bangkok Komatsu Forklift" style="height:52px;object-fit:contain;border-radius:6px;">
   <div style="flex:1">
@@ -211,11 +200,10 @@
   </div>
   <img src="forklift.jpg" alt="Forklift" style="height:80px;object-fit:contain;border-radius:8px;background:#f8f8f8;padding:4px;">
 </header>
- 
+
 <!-- Detail Page (hidden by default) -->
 <div id="detailPage">
   <div class="detail-header">
-    <button class="btn-back" onclick="closDetail()">← กลับ</button>
     <div>
       <div class="detail-header-title" id="detail-header-title">รายละเอียด</div>
       <div class="detail-header-sub" id="detail-header-sub"></div>
@@ -223,9 +211,9 @@
   </div>
   <div class="detail-body" id="detail-body"></div>
 </div>
- 
+
 <div class="main">
- 
+
   <!-- KPI Cards -->
   <div class="kpi-grid">
     <div class="kpi-card kpi-blue">
@@ -259,10 +247,10 @@
       <div class="sub">คัน</div>
     </div>
   </div>
- 
+
   <!-- Alerts -->
   <div class="alert-section" id="alert-section"></div>
- 
+
   <!-- Charts -->
   <div class="charts-grid">
     <div class="chart-card">
@@ -282,7 +270,7 @@
       <canvas id="chartNewUsed"></canvas>
     </div>
   </div>
- 
+
   <!-- Table -->
   <div class="table-section">
     <div class="table-header">
@@ -322,259 +310,136 @@
       </div>
     </div>
   </div>
- 
+
 </div>
- 
+
 <script>
-// ============================================================
-//  CONFIG — แก้ตรงนี้ถ้าเปลี่ยน Sheet
-// ============================================================
-const SHEET_ID   = '1iFWpgZBXHa93M6iTlI5Xce4jTJVEy374tBDtHMKyCZI';
-const SHEET_NAME = 'Sheet1';
- 
-// ============================================================
-//  Loading Overlay
-// ============================================================
-document.body.insertAdjacentHTML('afterbegin', `
-  <div id="loadingOverlay" style="
-    position:fixed;inset:0;z-index:9999;background:#0f172a;
-    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;">
-    <div style="width:48px;height:48px;border:4px solid #334155;border-top-color:#3b82f6;
-      border-radius:50%;animation:spin 0.8s linear infinite"></div>
-    <div style="color:#94a3b8;font-size:14px">กำลังโหลดข้อมูลจาก Google Sheet...</div>
-    <style>@keyframes spin{to{transform:rotate(360deg)}}</style>
-  </div>`);
- 
-// ============================================================
-//  Helper
-// ============================================================
-function calcDaysLeft(endStr) {
-  if (!endStr) return null;
-  let d;
-  if (typeof endStr === 'string' && endStr.includes('/')) {
-    const [dd, mm, yyyy] = endStr.split('/');
-    d = new Date(`${yyyy}-${mm.padStart(2,'0')}-${dd.padStart(2,'0')}`);
-  } else {
-    d = new Date(endStr);
-  }
-  if (isNaN(d)) return null;
-  const today = new Date(); today.setHours(0,0,0,0);
-  return Math.round((d - today) / 86400000);
-}
- 
-function calcExpiryCat(days) {
-  if (days === null) return 'ไม่ระบุ';
-  if (days < 0)    return 'หมดสัญญาแล้ว';
-  if (days <= 90)  return 'ภายใน 3 เดือน';
-  if (days <= 180) return 'ภายใน 6 เดือน';
-  return 'มากกว่า 6 เดือน';
-}
- 
-function gvizDateToThai(val) {
-  // gviz ส่ง Date object เป็น Date(yyyy,m,d) — month เริ่มที่ 0
-  if (typeof val === 'string' && val.startsWith('Date(')) {
-    const [y,m,day] = val.slice(5,-1).split(',').map(Number);
-    return `${String(day).padStart(2,'0')}/${String(m+1).padStart(2,'0')}/${y}`;
-  }
-  return val ?? '';
-}
- 
-// ============================================================
-//  Fetch จาก Google Sheet
-// ============================================================
-// ============================================================
-//  Fetch จาก Google Sheet — ใช้ชื่อ column ตรงจาก Sheet header
-// ============================================================
-function cellVal(row, idx) {
-  const cell = row.c?.[idx];
-  if (!cell || cell.v === null || cell.v === undefined) return '';
-  const v = cell.v;
-  if (typeof v === 'string' && v.startsWith('Date(')) return gvizDateToThai(v);
-  if (cell.f && typeof cell.f === 'string') return cell.f;
-  return String(v);
-}
- 
-async function loadFromSheet() {
-  const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(SHEET_NAME)}`;
-  try {
-    const res = await fetch(url);
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const text = await res.text();
-    const jsonStr = text.replace(/^[\s\S]*?setResponse\(/, '').replace(/\);?\s*$/, '');
-    const json = JSON.parse(jsonStr);
- 
-    // อ่านชื่อ column จาก Sheet โดยตรง
-    const cols = json.table.cols.map(c => c.label.trim());
-    console.log('Sheet columns:', cols.join(' | '));
- 
-    const RAW_DATA = (json.table.rows || [])
-      .filter(row => row.c && row.c.some(cell => cell?.v !== null && cell?.v !== ''))
-      .map((row, idx) => {
-        const obj = { _idx: idx };
-        cols.forEach((col, i) => { if(col) obj[col] = cellVal(row, i); });
-        // คำนวณ days_left + expiry_cat ใหม่ทุกครั้ง (ข้อมูลสด ไม่ต้องแก้ใน Sheet)
-        const days = calcDaysLeft(obj.end);
-        obj.days_left  = days;
-        obj.expiry_cat = calcExpiryCat(days);
-        obj.price  = Number(String(obj.price  || '').replace(/,/g,'')) || 0;
-        obj['งวด'] = Number(String(obj['งวด'] || '').replace(/,/g,'')) || 0;
-        return obj;
-      });
- 
-    document.getElementById('loadingOverlay').remove();
-    initDashboard(RAW_DATA);
- 
-  } catch(e) {
-    document.getElementById('loadingOverlay').innerHTML = `
-      <div style="color:#f87171;font-size:18px;font-weight:700">❌ โหลดข้อมูลไม่สำเร็จ</div>
-      <div style="color:#94a3b8;font-size:13px;max-width:380px;text-align:center;line-height:1.8;margin-top:4px">
-        ${e.message}<br>
-        กรุณาตรวจสอบว่า Google Sheet ถูกตั้งค่าเป็น<br>
-        <b style="color:#fbbf24">"Anyone with the link — Viewer"</b> แล้ว
-      </div>
-      <button onclick="location.reload()" style="margin-top:12px;background:#3b82f6;color:#fff;
-        border:none;border-radius:8px;padding:10px 28px;font-size:14px;cursor:pointer">🔄 ลองใหม่</button>`;
-  }
-}
- 
-// ============================================================
-//  Dashboard หลัก
-// ============================================================
-function initDashboard(RAW_DATA) {
- 
-const DATA    = RAW_DATA.filter(d => d.contract_no !== 'รถสำรองใช้งาน');
+const RAW_DATA = [{"no":"1","company":"บมจ.ไทยฮั้ว ยางพารา (สาขาบางกล่ำ)","province":"สงขลา","branch":"หาดใหญ่","sales":"พิษณุ","contract_no":"","new_used":"NEW","model":"FD30T-17","mast":"4.5FV","forks":"1370F","tire":"UCT","accessories":"Hinged Fork","chassis_no":"M229-362421","engine_no":"84939","car_no":"","start":"11/01/2022","end":"10/01/2026","work_hours":"10","tires_per_year":"1","งวด":48,"price":22000,"price_vat":"","days_left":-98,"expiry_cat":"หมดสัญญาแล้ว"},{"no":"2","company":"บจก.สยามไบโอแมส แมนูแฟคเจอริ่ง(โรงงานพระแสง)","province":"สุราษฎร์ธานี","branch":"หาดใหญ่","sales":"พิษณุ","contract_no":"","new_used":"USED","model":"FD25T-17","mast":"5.5FV","forks":"1820F","tire":"UCT","accessories":"","chassis_no":"M228-351812","engine_no":"79850","car_no":"","start":"24/01/2024","end":"23/01/2026","work_hours":"8","tires_per_year":"1","งวด":12,"price":18000,"price_vat":"","days_left":-85,"expiry_cat":"หมดสัญญาแล้ว"},{"no":"3","company":"บจก.ไทยแมค เอสทีอาร์ (ตรัง)","province":"ตรัง","branch":"หาดใหญ่","sales":"พิษณุ","contract_no":"1HL-18010006","new_used":"NEW","model":"FD30T-17","mast":"4.0FV","forks":"1220F","tire":"UCT","accessories":"","chassis_no":"M229-361915","engine_no":"84687","car_no":"","start":"25/01/2022","end":"24/01/2026","work_hours":"10","tires_per_year":"1","งวด":48,"price":18500,"price_vat":"","days_left":-84,"expiry_cat":"หมดสัญญาแล้ว"},{"no":"4","company":"บจก.ไทยแมค เอสทีอาร์ (ตรัง)","province":"ตรัง","branch":"หาดใหญ่","sales":"พิษณุ","contract_no":"1HL-18010007","new_used":"NEW","model":"FD30T-17","mast":"4.0TFV","forks":"1220F","tire":"UCT","accessories":"SS","chassis_no":"M229-362849","engine_no":"85160","car_no":"","start":"25/01/2022","end":"24/01/2026","work_hours":"10","tires_per_year":"1","งวด":48,"price":21400,"price_vat":"","days_left":-84,"expiry_cat":"หมดสัญญาแล้ว"},{"no":"5","company":"บมจ.ไทยฮั้ว ยางพารา (สาขาสะเดา)","province":"สงขลา","branch":"หาดใหญ่","sales":"พิษณุ","contract_no":"","new_used":"NEW","model":"FD30T-17","mast":"6.0TFV","forks":"1820F","tire":"DFT/UCT","accessories":"SS","chassis_no":"M229-362772","engine_no":"85095","car_no":"2","start":"26/04/2022","end":"25/04/2026","work_hours":"10","tires_per_year":"1","งวด":48,"price":23800,"price_vat":"","days_left":7,"expiry_cat":"ภายใน 3 เดือน"},{"no":"6","company":"บจก.ภูมิพันวา","province":"นครศรีธรรมราช","branch":"หาดใหญ่","sales":"พิษณุ","contract_no":"","new_used":"USED","model":"FD30T-17","mast":"4.0FV","forks":"1220F","tire":"UCT","accessories":"","chassis_no":"M229-356138","engine_no":"82001","car_no":"","start":"01/05/2025","end":"30/04/2026","work_hours":"8","tires_per_year":"2","งวด":12,"price":20000,"price_vat":"","days_left":12,"expiry_cat":"ภายใน 3 เดือน"},{"no":"7","company":"บจก.เพชรนครพาราวู้ด 99","province":"นครศรีธรรมราช","branch":"หาดใหญ่","sales":"พิษณุ","contract_no":"","new_used":"USED","model":"FD30T-17","mast":"4.5FV","forks":"1220F","tire":"UCT","accessories":"","chassis_no":"M229-355618","engine_no":"81674","car_no":"","start":"18/05/2022","end":"17/05/2026","work_hours":"8","tires_per_year":"1","งวด":24,"price":15000,"price_vat":"","days_left":29,"expiry_cat":"ภายใน 3 เดือน"},{"no":"8","company":"บจก.ไทยแมค เอสทีอาร์ สาขากระบี่ 2","province":"กระบี่","branch":"หาดใหญ่","sales":"พิษณุ","contract_no":"1HL-22070005","new_used":"NEW","model":"FD30T-17","mast":"7.0TFV","forks":"2000F","tire":"DFT/UCT","accessories":"SS","chassis_no":"M229-364998","engine_no":"00464A","car_no":"8","start":"22/07/2022","end":"21/07/2026","work_hours":"10","tires_per_year":"1","งวด":48,"price":24800,"price_vat":"","days_left":94,"expiry_cat":"ภายใน 6 เดือน"},{"no":"9","company":"บจก.ไทยแมค เอสทีอาร์ สาขากระบี่ 2","province":"กระบี่","branch":"หาดใหญ่","sales":"พิษณุ","contract_no":"","new_used":"NEW","model":"FD30T-17","mast":"7.0TFV","forks":"2000F","tire":"DFT/UCT","accessories":"SS","chassis_no":"M229-364999","engine_no":"00465A","car_no":"9","start":"22/07/2022","end":"21/07/2026","work_hours":"10","tires_per_year":"1","งวด":48,"price":24800,"price_vat":"","days_left":94,"expiry_cat":"ภายใน 6 เดือน"},{"no":"10","company":"บจก.บริดจสโตน เนเชอรัล รับเบอร์ (ประทศไทย)","province":"สงขลา","branch":"หาดใหญ่","sales":"พิษณุ","contract_no":"","new_used":"NEW","model":"FG25T-17","mast":"4.0FV","forks":"1220F","tire":"UCT","accessories":"LPG","chassis_no":"M225-363715","engine_no":"K21","car_no":"CV13","start":"27/07/2023","end":"26/07/2026","work_hours":"16","tires_per_year":"1","งวด":36,"price":24000,"price_vat":"","days_left":99,"expiry_cat":"ภายใน 6 เดือน"},{"no":"11","company":"บจก.บางขันพาราวู้ด อินดัสตรี้","province":"นครศรีธรรมราช","branch":"หาดใหญ่","sales":"พิษณุ","contract_no":"1HL-22080003","new_used":"NEW","model":"FD25T-17","mast":"3.0FV","forks":"1370F","tire":"UCT","accessories":"SS","chassis_no":"M228-363615","engine_no":"85588","car_no":"","start":"05/08/2022","end":"04/08/2026","work_hours":"8","tires_per_year":"2","งวด":48,"price":22500,"price_vat":"","days_left":108,"expiry_cat":"ภายใน 6 เดือน"},{"no":"12","company":"บจก.บริดจสโตน เนเชอรัล รับเบอร์ (ประทศไทย)","province":"สงขลา","branch":"หาดใหญ่","sales":"พิษณุ","contract_no":"","new_used":"NEW","model":"FD25T-17","mast":"5.0FV","forks":"1220F","tire":"DFT/UCT","accessories":"","chassis_no":"M228-362098","engine_no":"4D94LE-84791","car_no":"6","start":"28/08/2021","end":"27/08/2026","work_hours":"16","tires_per_year":"1","งวด":36,"price":24500,"price_vat":"","days_left":131,"expiry_cat":"ภายใน 6 เดือน"},{"no":"13","company":"บจก.บริดจสโตน เนเชอรัล รับเบอร์ (ประทศไทย)","province":"สงขลา","branch":"หาดใหญ่","sales":"พิษณุ","contract_no":"","new_used":"NEW","model":"FD25T-17","mast":"5.0FV","forks":"1220F","tire":"DFT/UCT","accessories":"","chassis_no":"M228-361805","engine_no":"4D94LE-84666","car_no":"7","start":"28/08/2021","end":"27/08/2026","work_hours":"16","tires_per_year":"1","งวด":36,"price":24500,"price_vat":"","days_left":131,"expiry_cat":"ภายใน 6 เดือน"},{"no":"14","company":"บจก.บริดจสโตน เนเชอรัล รับเบอร์ (ประทศไทย)","province":"สงขลา","branch":"หาดใหญ่","sales":"พิษณุ","contract_no":"","new_used":"NEW","model":"FD25T-17","mast":"5.0FV","forks":"1220F","tire":"DFT/UCT","accessories":"","chassis_no":"M228-361784","engine_no":"4D94LE-84662","car_no":"8","start":"28/08/2021","end":"27/08/2026","work_hours":"16","tires_per_year":"1","งวด":36,"price":24500,"price_vat":"","days_left":131,"expiry_cat":"ภายใน 6 เดือน"},{"no":"15","company":"บจก.บริดจสโตน เนเชอรัล รับเบอร์ (ประทศไทย)","province":"สงขลา","branch":"หาดใหญ่","sales":"พิษณุ","contract_no":"","new_used":"NEW","model":"FD30T-17","mast":"4.0FV","forks":"1070F","tire":"UCT","accessories":"","chassis_no":"M229-359530","engine_no":"4D94LE-83516","car_no":"12","start":"28/08/2021","end":"27/08/2026","work_hours":"16","tires_per_year":"1","งวด":36,"price":24500,"price_vat":"","days_left":131,"expiry_cat":"ภายใน 6 เดือน"},{"no":"16","company":"บจก.หวาไถ้รับเบอร์","province":"สงขลา","branch":"หาดใหญ่","sales":"พิษณุ","contract_no":"","new_used":"USED","model":"FD30T-17","mast":"4.5TFV","forks":"1220F","tire":"UCT","accessories":"SS","chassis_no":"M229-359801","engine_no":"83658","car_no":"","start":"30/08/2024","end":"29/08/2026","work_hours":"10","tires_per_year":"2","งวด":24,"price":22000,"price_vat":"","days_left":133,"expiry_cat":"ภายใน 6 เดือน"},{"no":"17","company":"บจก.หวาไถ้รับเบอร์","province":"สงขลา","branch":"หาดใหญ่","sales":"พิษณุ","contract_no":"","new_used":"USED","model":"FD30T-17","mast":"4.0FV","forks":"1220F","tire":"UCT","accessories":"","chassis_no":"M229-360248","engine_no":"83913","car_no":"","start":"22/10/2024","end":"21/10/2026","work_hours":"10","tires_per_year":"2","งวด":24,"price":21500,"price_vat":"","days_left":186,"expiry_cat":"มากกว่า 6 เดือน"},{"no":"18","company":"บมจ.ไทยฮั้ว ยางพารา (สาขาฉลุง)","province":"สงขลา","branch":"หาดใหญ่","sales":"พิษณุ","contract_no":"","new_used":"NEW","model":"FD30T-17","mast":"4.0FV","forks":"1220F","tire":"UCT","accessories":"","chassis_no":"M229-366137","engine_no":"01061A","car_no":"","start":"07/12/2022","end":"06/12/2026","work_hours":"10","tires_per_year":"1","งวด":48,"price":18500,"price_vat":"","days_left":232,"expiry_cat":"มากกว่า 6 เดือน"},{"no":"19","company":"บมจ.ไทยฮั้ว ยางพารา (สาขาฉลุง)","province":"สงขลา","branch":"หาดใหญ่","sales":"พิษณุ","contract_no":"","new_used":"NEW","model":"FD30T-17","mast":"4.0FV","forks":"1220F","tire":"UCT","accessories":"","chassis_no":"M229-366138","engine_no":"01005A","car_no":"","start":"07/12/2022","end":"06/12/2026","work_hours":"10","tires_per_year":"1","งวด":48,"price":18500,"price_vat":"","days_left":232,"expiry_cat":"มากกว่า 6 เดือน"},{"no":"20","company":"บมจ.ไทยฮั้ว ยางพารา (สาขาฉลุง)","province":"สงขลา","branch":"หาดใหญ่","sales":"พิษณุ","contract_no":"","new_used":"NEW","model":"FD30T-17","mast":"4.0FV","forks":"1220F","tire":"UCT","accessories":"","chassis_no":"M229-366152","engine_no":"01008A","car_no":"","start":"07/12/2022","end":"06/12/2026","work_hours":"10","tires_per_year":"1","งวด":48,"price":18500,"price_vat":"","days_left":232,"expiry_cat":"มากกว่า 6 เดือน"},{"no":"21","company":"บมจ.ไทยฮั้ว ยางพารา (สาขาฉลุง)","province":"สงขลา","branch":"หาดใหญ่","sales":"พิษณุ","contract_no":"","new_used":"NEW","model":"FD30T-17","mast":"4.0TFV","forks":"1220F","tire":"UCT","accessories":"","chassis_no":"M229-365143","engine_no":"00519A","car_no":"","start":"07/12/2022","end":"06/12/2026","work_hours":"10","tires_per_year":"1","งวด":48,"price":21400,"price_vat":"","days_left":232,"expiry_cat":"มากกว่า 6 เดือน"},{"no":"22","company":"บมจ.ไทยฮั้ว ยางพารา (สาขาฉลุง)","province":"สงขลา","branch":"หาดใหญ่","sales":"พิษณุ","contract_no":"","new_used":"NEW","model":"FD30T-17","mast":"6.0TFV","forks":"1220F","tire":"DFT/UCT","accessories":"","chassis_no":"M229-365516","engine_no":"00754A","car_no":"","start":"07/12/2022","end":"06/12/2026","work_hours":"10","tires_per_year":"1","งวด":48,"price":22300,"price_vat":"","days_left":232,"expiry_cat":"มากกว่า 6 เดือน"},{"no":"23","company":"บมจ.ไทยฮั้ว ยางพารา (สาขาสะเดา)","province":"สงขลา","branch":"หาดใหญ่","sales":"พิษณุ","contract_no":"","new_used":"NEW","model":"FD30T-17","mast":"6.0TFV","forks":"1820F","tire":"DFT/UCT","accessories":"SS","chassis_no":"M229-365534","engine_no":"00769A","car_no":"","start":"07/12/2022","end":"06/12/2026","work_hours":"10","tires_per_year":"1","งวด":48,"price":23800,"price_vat":"","days_left":232,"expiry_cat":"มากกว่า 6 เดือน"},{"no":"24","company":"บมจ.ไทยฮั้ว ยางพารา (สาขาสะเดา)","province":"สงขลา","branch":"หาดใหญ่","sales":"พิษณุ","contract_no":"","new_used":"NEW","model":"FD30T-17","mast":"6.0TFV","forks":"1820F","tire":"DFT/UCT","accessories":"SS","chassis_no":"M229-365535","engine_no":"00768A","car_no":"","start":"07/12/2022","end":"06/12/2026","work_hours":"10","tires_per_year":"1","งวด":48,"price":23800,"price_vat":"","days_left":232,"expiry_cat":"มากกว่า 6 เดือน"},{"no":"25","company":"บมจ.ไทยฮั้ว ยางพารา (สาขาบางกล่ำ)","province":"สงขลา","branch":"หาดใหญ่","sales":"พิษณุ","contract_no":"","new_used":"NEW","model":"FD30T-17","mast":"4.5FV","forks":"1520F","tire":"UCT","accessories":"","chassis_no":"M229-366135","engine_no":"01035A","car_no":"","start":"08/12/2022","end":"07/12/2026","work_hours":"10","tires_per_year":"1","งวด":48,"price":18500,"price_vat":"","days_left":233,"expiry_cat":"มากกว่า 6 เดือน"},{"no":"26","company":"บจก.ไทยแมค เอสทีอาร์ (คลองท่อม)","province":"กระบี่","branch":"หาดใหญ่","sales":"พิษณุ","contract_no":"","new_used":"NEW","model":"FD30T-17","mast":"4.0FV","forks":"1220F","tire":"UCT","accessories":"","chassis_no":"M229-366140","engine_no":"01006A","car_no":"","start":"16/12/2022","end":"15/12/2026","work_hours":"10","tires_per_year":"1","งวด":48,"price":18500,"price_vat":"","days_left":241,"expiry_cat":"มากกว่า 6 เดือน"},{"no":"27","company":"บจก.ไทยแมค เอสทีอาร์ (คลองท่อม)","province":"กระบี่","branch":"หาดใหญ่","sales":"พิษณุ","contract_no":"","new_used":"NEW","model":"FD30T-17","mast":"4.5FV","forks":"1220F","tire":"UCT","accessories":"","chassis_no":"M229-366134","engine_no":"01034A","car_no":"","start":"16/12/2022","end":"15/12/2026","work_hours":"16","tires_per_year":"1","งวด":48,"price":21500,"price_vat":"","days_left":241,"expiry_cat":"มากกว่า 6 เดือน"},{"no":"28","company":"บจก.ไทยแมค เอสทีอาร์ (คลองท่อม)(คันธุรี)","province":"กระบี่","branch":"หาดใหญ่","sales":"พิษณุ","contract_no":"","new_used":"NEW","model":"FD30T-17","mast":"5.0FV","forks":"1370F","tire":"DFT/UCT","accessories":"Hinged Fork","chassis_no":"M229-365010","engine_no":"00507A","car_no":"","start":"20/12/2022","end":"19/12/2026","work_hours":"10","tires_per_year":"1","งวด":48,"price":26000,"price_vat":"","days_left":245,"expiry_cat":"มากกว่า 6 เดือน"},{"no":"29","company":"บมจ.ไทยฮั้ว ยางพารา (สาขาพระแสง)","province":"สงขลา","branch":"หาดใหญ่","sales":"พิษณุ","contract_no":"","new_used":"NEW","model":"FD30T-17","mast":"4.0FV","forks":"1520F","tire":"UCT","accessories":"SS","chassis_no":"M229-366615","engine_no":"01090A","car_no":"","start":"22/12/2022","end":"21/12/2026","work_hours":"10","tires_per_year":"1","งวด":48,"price":20000,"price_vat":"","days_left":247,"expiry_cat":"มากกว่า 6 เดือน"},{"no":"30","company":"บมจ.ไทยฮั้ว ยางพารา (สาขาพระแสง)","province":"สงขลา","branch":"หาดใหญ่","sales":"พิษณุ","contract_no":"","new_used":"NEW","model":"FD30T-17","mast":"4.0FV","forks":"1520F","tire":"UCT","accessories":"SS","chassis_no":"M229-366636","engine_no":"01016A","car_no":"","start":"22/12/2022","end":"21/12/2026","work_hours":"10","tires_per_year":"1","งวด":48,"price":20000,"price_vat":"","days_left":247,"expiry_cat":"มากกว่า 6 เดือน"},{"no":"31","company":"บจก.กว๋างเขิ่นรับเบอร์ (ไทย อีสเทิร์น)","province":"ชุมพร","branch":"หาดใหญ่","sales":"พิษณุ","contract_no":"","new_used":"NEW","model":"FD30T-17","mast":"4.5TFV","forks":"1220F","tire":"UCT","accessories":"SS","chassis_no":"M229-367155","engine_no":"01603A","car_no":"","start":"10/03/2023","end":"09/03/2027","work_hours":"10","tires_per_year":"1","งวด":48,"price":21400,"price_vat":"","days_left":325,"expiry_cat":"มากกว่า 6 เดือน"},{"no":"32","company":"บจก.ไทยแมค เอสทีอาร์ สาขากระบี่ 2","province":"กระบี่","branch":"หาดใหญ่","sales":"พิษณุ","contract_no":"","new_used":"NEW","model":"FD30T-17","mast":"6.0TFV","forks":"2000F","tire":"DFT/UCT","accessories":"SS","chassis_no":"M229-365520","engine_no":"00734A","car_no":"10","start":"30/03/2023","end":"29/03/2027","work_hours":"10","tires_per_year":"1","งวด":48,"price":23800,"price_vat":"23800","days_left":345,"expiry_cat":"มากกว่า 6 เดือน"},{"no":"33","company":"บจก.ไทยแมค เอสทีอาร์ สาขากระบี่ 2","province":"กระบี่","branch":"หาดใหญ่","sales":"พิษณุ","contract_no":"","new_used":"NEW","model":"FD30T-17","mast":"6.0TFV","forks":"2000F","tire":"DFT/UCT","accessories":"SS","chassis_no":"M229-365559","engine_no":"00668A","car_no":"12","start":"30/03/2023","end":"29/03/2027","work_hours":"10","tires_per_year":"1","งวด":48,"price":23800,"price_vat":"","days_left":345,"expiry_cat":"มากกว่า 6 เดือน"},{"no":"34","company":"บจก.ไทยแมค เอสทีอาร์ สาขากระบี่ 2","province":"กระบี่","branch":"หาดใหญ่","sales":"พิษณุ","contract_no":"","new_used":"NEW","model":"FD30T-17","mast":"6.0TFV","forks":"1820F","tire":"DFT/UCT","accessories":"SS","chassis_no":"M229-367073","engine_no":"01278A","car_no":"11","start":"30/03/2023","end":"29/03/2027","work_hours":"10","tires_per_year":"1","งวด":48,"price":23800,"price_vat":"","days_left":345,"expiry_cat":"มากกว่า 6 เดือน"},{"no":"35","company":"บมจ.ไทยฮั้ว ยางพารา (สาขาบางกล่ำ)","province":"สงขลา","branch":"หาดใหญ่","sales":"พิษณุ","contract_no":"","new_used":"NEW","model":"FD30T-17","mast":"4.5TFV","forks":"1520F","tire":"UCT","accessories":"SS","chassis_no":"M229-367997","engine_no":"01954A","car_no":"","start":"08/04/2023","end":"07/04/2027","work_hours":"10","tires_per_year":"1","งวด":48,"price":21400,"price_vat":"","days_left":354,"expiry_cat":"มากกว่า 6 เดือน"},{"no":"36","company":"บจก.บริดจสโตน เนเชอรัล รับเบอร์ (ประทศไทย)","province":"สงขลา","branch":"หาดใหญ่","sales":"พิษณุ","contract_no":"","new_used":"NEW","model":"FG30T-17","mast":"4.0FV","forks":"1220F","tire":"UCT","accessories":"LPG","chassis_no":"M226-369493","engine_no":"215458","car_no":"","start":"24/06/2024","end":"23/06/2027","work_hours":"16","tires_per_year":"1","งวด":36,"price":25500,"price_vat":"","days_left":431,"expiry_cat":"มากกว่า 6 เดือน"},{"no":"37","company":"บจก.บริดจสโตน เนเชอรัล รับเบอร์ (ประทศไทย)","province":"สงขลา","branch":"หาดใหญ่","sales":"พิษณุ","contract_no":"","new_used":"NEW","model":"FG30T-17","mast":"3.0FV","forks":"1220F","tire":"UCT","accessories":"LPG","chassis_no":"M226-369157","engine_no":"213818","car_no":"","start":"24/06/2024","end":"23/06/2027","work_hours":"16","tires_per_year":"1","งวด":36,"price":25500,"price_vat":"","days_left":431,"expiry_cat":"มากกว่า 6 เดือน"},{"no":"38","company":"บจก.บริดจสโตน เนเชอรัล รับเบอร์ (ประทศไทย)","province":"สงขลา","branch":"หาดใหญ่","sales":"พิษณุ","contract_no":"","new_used":"NEW","model":"FG30T-17","mast":"3.0FV","forks":"1220F","tire":"UCT","accessories":"LPG","chassis_no":"M226-369168","engine_no":"213819","car_no":"","start":"24/06/2024","end":"23/06/2027","work_hours":"16","tires_per_year":"1","งวด":36,"price":25500,"price_vat":"","days_left":431,"expiry_cat":"มากกว่า 6 เดือน"},{"no":"39","company":"บจก.หวาไถ้รับเบอร์","province":"สงขลา","branch":"หาดใหญ่","sales":"พิษณุ","contract_no":"","new_used":"USED","model":"FD30T-17","mast":"3.0FFV","forks":"1220F","tire":"UCT","accessories":"SS","chassis_no":"M229-350515","engine_no":"79187","car_no":"","start":"01/08/2025","end":"31/07/2027","work_hours":"10","tires_per_year":"2","งวด":24,"price":21500,"price_vat":"","days_left":469,"expiry_cat":"มากกว่า 6 เดือน"},{"no":"40","company":"บมจ.ไทยฮั้ว ยางพารา (สาขาบางกล่ำ)","province":"สงขลา","branch":"หาดใหญ่","sales":"พิษณุ","contract_no":"","new_used":"NEW","model":"FD30T-17","mast":"7.0TFV","forks":"1820F","tire":"DFT/UCT","accessories":"SS","chassis_no":"M229-367657","engine_no":"01672A","car_no":"","start":"08/08/2023","end":"07/08/2027","work_hours":"10","tires_per_year":"1","งวด":48,"price":23000,"price_vat":"","days_left":476,"expiry_cat":"มากกว่า 6 เดือน"},{"no":"41","company":"บจก.ไทยแมค เอสทีอาร์ (คลองท่อม)","province":"กระบี่","branch":"หาดใหญ่","sales":"พิษณุ","contract_no":"","new_used":"NEW","model":"FD30T-17","mast":"4.0TFV","forks":"1220F","tire":"UCT","accessories":"SS","chassis_no":"M229-368970","engine_no":"02061A","car_no":"","start":"15/11/2024","end":"14/11/2028","work_hours":"10","tires_per_year":"1","งวด":48,"price":20800,"price_vat":"","days_left":941,"expiry_cat":"มากกว่า 6 เดือน"},{"no":"42","company":"บจก.เพชรนครพาราวู้ด 99","province":"นครศรีธรรมราช","branch":"หาดใหญ่","sales":"พิษณุ","contract_no":"1HL-22060005","new_used":"NEW","model":"FD25T-17","mast":"3.0FV","forks":"1220F","tire":"UCT","accessories":"","chassis_no":"M228-370664","engine_no":"86550","car_no":"","start":"17/06/2025","end":"16/06/2029","work_hours":"8","tires_per_year":"2","งวด":48,"price":21500,"price_vat":"","days_left":1155,"expiry_cat":"มากกว่า 6 เดือน"},{"no":"43","company":"บมจ.ไทยฮั้ว ยางพารา (สาขาสะเดา)","province":"สงขลา","branch":"หาดใหญ่","sales":"พิษณุ","contract_no":"","new_used":"NEW","model":"FD30T-17","mast":"6.0TFV","forks":"1820F","tire":"DFT/UCT","accessories":"","chassis_no":"M229-371386","engine_no":"86771","car_no":"","start":"30/04/2025","end":"01/05/2072","work_hours":"10","tires_per_year":"1","งวด":48,"price":21500,"price_vat":"","days_left":16815,"expiry_cat":"มากกว่า 6 เดือน"},{"no":"44","company":"บมจ.ไทยฮั้ว ยางพารา (สาขาสะเดา)","province":"สงขลา","branch":"หาดใหญ่","sales":"พิษณุ","contract_no":"","new_used":"NEW","model":"FD30T-17","mast":"6.0TFV","forks":"1820F","tire":"DFT/UCT","accessories":"SS","chassis_no":"M229-371377","engine_no":"86786","car_no":"","start":"30/04/2025","end":"01/05/2072","work_hours":"10","tires_per_year":"1","งวด":48,"price":22500,"price_vat":"","days_left":16815,"expiry_cat":"มากกว่า 6 เดือน"},{"no":"45","company":"บมจ.ไทยฮั้ว ยางพารา (สาขาสะเดา)","province":"สงขลา","branch":"หาดใหญ่","sales":"พิษณุ","contract_no":"","new_used":"NEW","model":"FD30T-17","mast":"6.0TFV","forks":"1820F","tire":"DFT/UCT","accessories":"SS","chassis_no":"M229-371282","engine_no":"86755","car_no":"","start":"30/04/2025","end":"01/05/2072","work_hours":"10","tires_per_year":"1","งวด":48,"price":22500,"price_vat":"","days_left":16815,"expiry_cat":"มากกว่า 6 เดือน"},{"no":"รถสำรองใช้งาน","company":"บจก.ไทยแมค เอสทีอาร์ (คลองท่อม)","province":"กระบี่","branch":"หาดใหญ่","sales":"พิษณุ","contract_no":"รถสำรองใช้งาน","new_used":"USED","model":"FD30T-17","mast":"4.5FV","forks":"1220F","tire":"UCT","accessories":"","chassis_no":"M229-343467","engine_no":"76123","car_no":"","start":"","end":"","work_hours":"10","tires_per_year":"1","งวด":48,"price":0,"price_vat":"","days_left":null,"expiry_cat":"ไม่ระบุ"},{"no":"รถสำรองใช้งาน","company":"บจก.บริดจสโตน เนเชอรัล รับเบอร์ (ประทศไทย)","province":"สงขลา","branch":"หาดใหญ่","sales":"พิษณุ","contract_no":"รถสำรองใช้งาน","new_used":"USED","model":"FG30T-17","mast":"3.0FV","forks":"1220F","tire":"UCT","accessories":"LPG","chassis_no":"M226-313578","engine_no":"K25","car_no":"14","start":"","end":"","work_hours":"","tires_per_year":"","งวด":0,"price":0,"price_vat":"","days_left":null,"expiry_cat":"ไม่ระบุ"},{"no":"รถสำรองใช้งาน","company":"บมจ.ไทยฮั้ว ยางพารา (สาขาสะเดา)","province":"สงขลา","branch":"หาดใหญ่","sales":"พิษณุ","contract_no":"รถสำรองใช้งาน","new_used":"NEW","model":"FD30T-17","mast":"","forks":"","tire":"","accessories":"","chassis_no":"M229-345693","engine_no":"","car_no":"","start":"","end":"","work_hours":"","tires_per_year":"","งวด":0,"price":0,"price_vat":"","days_left":null,"expiry_cat":"ไม่ระบุ"}];
+
+// Exclude reserve cars from main stats
+const DATA = RAW_DATA.filter(d => d.contract_no !== 'รถสำรองใช้งาน');
 const RESERVE = RAW_DATA.filter(d => d.contract_no === 'รถสำรองใช้งาน');
- 
+
 // KPIs
 const withPrice = DATA.filter(d => d.price > 0);
-document.getElementById('kpi-total').textContent    = RAW_DATA.length;
-document.getElementById('kpi-revenue').textContent  = withPrice.reduce((s,d)=>s+d.price,0).toLocaleString();
-document.getElementById('kpi-avg').textContent      = withPrice.length
-  ? Math.round(withPrice.reduce((s,d)=>s+d.price,0)/withPrice.length).toLocaleString() : '0';
-document.getElementById('kpi-expired').textContent  = DATA.filter(d=>d.expiry_cat==='หมดสัญญาแล้ว').length;
-document.getElementById('kpi-soon3').textContent    = DATA.filter(d=>d.expiry_cat==='ภายใน 3 เดือน').length;
- 
+document.getElementById('kpi-total').textContent = RAW_DATA.length;
+document.getElementById('kpi-revenue').textContent = withPrice.reduce((s,d)=>s+d.price,0).toLocaleString();
+document.getElementById('kpi-avg').textContent = Math.round(withPrice.reduce((s,d)=>s+d.price,0)/withPrice.length).toLocaleString();
+document.getElementById('kpi-expired').textContent = DATA.filter(d=>d.expiry_cat==='หมดสัญญาแล้ว').length;
+document.getElementById('kpi-soon3').textContent = DATA.filter(d=>d.expiry_cat==='ภายใน 3 เดือน').length;
+
 // Alerts
 const expired = DATA.filter(d=>d.expiry_cat==='หมดสัญญาแล้ว');
-const soon3   = DATA.filter(d=>d.expiry_cat==='ภายใน 3 เดือน');
+const soon3 = DATA.filter(d=>d.expiry_cat==='ภายใน 3 เดือน');
 let alertHtml = '';
-if (expired.length)
-  alertHtml += `<div class="alert-box"><div class="alert-icon">🚨</div><div>
-    <div class="alert-title">หมดสัญญาแล้ว ${expired.length} คัน — ต้องดำเนินการด่วน</div>
-    <div class="alert-list">${expired.map(d=>`• ${d.company} (${d.province}) · วันหมด: ${d.end}`).join('<br>')}</div>
-  </div></div>`;
-if (soon3.length)
-  alertHtml += `<div class="alert-box warn"><div class="alert-icon">⚠️</div><div>
-    <div class="alert-title">ใกล้หมดสัญญาภายใน 3 เดือน จำนวน ${soon3.length} คัน</div>
-    <div class="alert-list">${soon3.map(d=>`• ${d.company} (${d.province}) · วันหมด: ${d.end} · เหลือ ${d.days_left} วัน`).join('<br>')}</div>
-  </div></div>`;
+if(expired.length) {
+  alertHtml += `<div class="alert-box"><div class="alert-icon">🚨</div><div><div class="alert-title">หมดสัญญาแล้ว ${expired.length} คัน — ต้องดำเนินการด่วน</div><div class="alert-list">${expired.map(d=>`• ${d.company} (${d.province}) · วันหมด: ${d.end}`).join('<br>')}</div></div></div>`;
+}
+if(soon3.length) {
+  alertHtml += `<div class="alert-box warn"><div class="alert-icon">⚠️</div><div><div class="alert-title">ใกล้หมดสัญญาภายใน 3 เดือน จำนวน ${soon3.length} คัน</div><div class="alert-list">${soon3.map(d=>`• ${d.company} (${d.province}) · วันหมด: ${d.end} · เหลือ ${d.days_left} วัน`).join('<br>')}</div></div></div>`;
+}
 document.getElementById('alert-section').innerHTML = alertHtml;
- 
-// ---- Charts ----
+
+// Charts
 const chartColors = ['#3b82f6','#22c55e','#f59e0b','#ef4444','#a855f7','#06b6d4','#ec4899'];
- 
+
 // Province revenue
 const provRev = {};
 withPrice.forEach(d=>{ provRev[d.province]=(provRev[d.province]||0)+d.price; });
 const provSorted = Object.entries(provRev).sort((a,b)=>b[1]-a[1]);
 new Chart(document.getElementById('chartProvince'), {
-  type:'bar',
-  data:{ labels:provSorted.map(e=>e[0]),
-         datasets:[{data:provSorted.map(e=>e[1]), backgroundColor:chartColors, borderRadius:6}] },
-  options:{plugins:{legend:{display:false}},
-           scales:{y:{ticks:{callback:v=>v.toLocaleString()},grid:{color:'#1e293b'}},
-                   x:{grid:{color:'#1e293b'}}}, responsive:true}
+  type:'bar', data:{
+    labels: provSorted.map(e=>e[0]),
+    datasets:[{data:provSorted.map(e=>e[1]), backgroundColor:chartColors, borderRadius:6}]
+  },
+  options:{plugins:{legend:{display:false}}, scales:{y:{ticks:{callback:v=>v.toLocaleString()}, grid:{color:'#1e293b'}}, x:{grid:{color:'#1e293b'}}}, responsive:true}
 });
- 
+
 // Expiry donut
 const expiryMap = {'หมดสัญญาแล้ว':0,'ภายใน 3 เดือน':0,'ภายใน 6 เดือน':0,'มากกว่า 6 เดือน':0};
 DATA.forEach(d=>{ if(expiryMap[d.expiry_cat]!==undefined) expiryMap[d.expiry_cat]++; });
 new Chart(document.getElementById('chartExpiry'), {
-  type:'doughnut',
-  data:{ labels:Object.keys(expiryMap),
-         datasets:[{data:Object.values(expiryMap),
-                    backgroundColor:['#ef4444','#f59e0b','#f97316','#22c55e'],
-                    borderColor:'#0f172a', borderWidth:3}] },
+  type:'doughnut', data:{
+    labels: Object.keys(expiryMap),
+    datasets:[{data:Object.values(expiryMap), backgroundColor:['#ef4444','#f59e0b','#f97316','#22c55e'], borderColor:'#0f172a', borderWidth:3}]
+  },
   options:{plugins:{legend:{labels:{color:'#94a3b8',font:{size:11}}}}, responsive:true, cutout:'60%'}
 });
- 
+
 // Model bar
 const modelMap = {};
 DATA.forEach(d=>{ modelMap[d.model]=(modelMap[d.model]||0)+1; });
 const modelSorted = Object.entries(modelMap).sort((a,b)=>b[1]-a[1]);
 new Chart(document.getElementById('chartModel'), {
-  type:'bar',
-  data:{ labels:modelSorted.map(e=>e[0]),
-         datasets:[{data:modelSorted.map(e=>e[1]),
-                    backgroundColor:['#3b82f6','#a855f7','#06b6d4','#ec4899'], borderRadius:6}] },
-  options:{plugins:{legend:{display:false}},
-           scales:{y:{grid:{color:'#1e293b'}}, x:{grid:{color:'#1e293b'}}}, responsive:true}
+  type:'bar', data:{
+    labels:modelSorted.map(e=>e[0]),
+    datasets:[{data:modelSorted.map(e=>e[1]), backgroundColor:['#3b82f6','#a855f7','#06b6d4','#ec4899'], borderRadius:6}]
+  },
+  options:{plugins:{legend:{display:false}}, scales:{y:{grid:{color:'#1e293b'}}, x:{grid:{color:'#1e293b'}}}, responsive:true}
 });
- 
+
 // New/Used pie
 const nuMap = {};
 DATA.forEach(d=>{ nuMap[d.new_used]=(nuMap[d.new_used]||0)+1; });
 new Chart(document.getElementById('chartNewUsed'), {
-  type:'pie',
-  data:{ labels:Object.keys(nuMap),
-         datasets:[{data:Object.values(nuMap), backgroundColor:['#3b82f6','#f59e0b'],
-                    borderColor:'#0f172a', borderWidth:3}] },
+  type:'pie', data:{
+    labels:Object.keys(nuMap),
+    datasets:[{data:Object.values(nuMap), backgroundColor:['#3b82f6','#f59e0b'], borderColor:'#0f172a', borderWidth:3}]
+  },
   options:{plugins:{legend:{labels:{color:'#94a3b8',font:{size:13}}}}, responsive:true}
 });
- 
-// ---- Table ----
+
+// Table
 let filteredData = [...RAW_DATA];
-let currentPage  = 1;
-const pageSize   = 15;
- 
+let currentPage = 1;
+const pageSize = 15;
+
 function populateFilters() {
   const provSel = document.getElementById('filterProvince');
-  const expSel  = document.getElementById('filterExpiry');
-  const modSel  = document.getElementById('filterModel');
-  [...new Set(RAW_DATA.map(d=>d.province))].sort()
-    .forEach(p=>{ const o=document.createElement('option'); o.value=p; o.text=p; provSel.appendChild(o); });
-  ['หมดสัญญาแล้ว','ภายใน 3 เดือน','ภายใน 6 เดือน','มากกว่า 6 เดือน','ไม่ระบุ']
-    .forEach(e=>{ const o=document.createElement('option'); o.value=e; o.text=e; expSel.appendChild(o); });
-  [...new Set(RAW_DATA.map(d=>d.model))].sort()
-    .forEach(m=>{ const o=document.createElement('option'); o.value=m; o.text=m; modSel.appendChild(o); });
+  const expSel = document.getElementById('filterExpiry');
+  const modSel = document.getElementById('filterModel');
+  [...new Set(RAW_DATA.map(d=>d.province))].sort().forEach(p=>{ const o=document.createElement('option'); o.value=p; o.text=p; provSel.appendChild(o); });
+  ['หมดสัญญาแล้ว','ภายใน 3 เดือน','ภายใน 6 เดือน','มากกว่า 6 เดือน','ไม่ระบุ'].forEach(e=>{ const o=document.createElement('option'); o.value=e; o.text=e; expSel.appendChild(o); });
+  [...new Set(RAW_DATA.map(d=>d.model))].sort().forEach(m=>{ const o=document.createElement('option'); o.value=m; o.text=m; modSel.appendChild(o); });
 }
- 
+
 function applyFilters() {
   const search = document.getElementById('searchInput').value.toLowerCase();
-  const prov   = document.getElementById('filterProvince').value;
-  const exp    = document.getElementById('filterExpiry').value;
-  const mod    = document.getElementById('filterModel').value;
+  const prov = document.getElementById('filterProvince').value;
+  const exp = document.getElementById('filterExpiry').value;
+  const mod = document.getElementById('filterModel').value;
   filteredData = RAW_DATA.filter(d => {
-    if (search && !d.company.toLowerCase().includes(search)) return false;
-    if (prov && d.province !== prov) return false;
-    if (exp  && d.expiry_cat !== exp) return false;
-    if (mod  && d.model !== mod) return false;
+    if(search && !d.company.toLowerCase().includes(search)) return false;
+    if(prov && d.province !== prov) return false;
+    if(exp && d.expiry_cat !== exp) return false;
+    if(mod && d.model !== mod) return false;
     return true;
   });
   currentPage = 1;
   renderTable();
 }
- 
+
 function getExpiryBadge(cat) {
-  if (cat==='หมดสัญญาแล้ว')  return `<span class="badge badge-expired">หมดสัญญา</span>`;
-  if (cat==='ภายใน 3 เดือน') return `<span class="badge badge-soon3">≤ 3 เดือน</span>`;
-  if (cat==='ภายใน 6 เดือน') return `<span class="badge badge-soon6">≤ 6 เดือน</span>`;
-  if (cat==='มากกว่า 6 เดือน') return `<span class="badge badge-ok">ปกติ</span>`;
+  if(cat==='หมดสัญญาแล้ว') return `<span class="badge badge-expired">หมดสัญญา</span>`;
+  if(cat==='ภายใน 3 เดือน') return `<span class="badge badge-soon3">≤ 3 เดือน</span>`;
+  if(cat==='ภายใน 6 เดือน') return `<span class="badge badge-soon6">≤ 6 เดือน</span>`;
+  if(cat==='มากกว่า 6 เดือน') return `<span class="badge badge-ok">ปกติ</span>`;
   return `<span class="badge" style="background:#374151;color:#9ca3af">ไม่ระบุ</span>`;
 }
- 
+
 function getDaysText(d) {
-  if (d===null||d===undefined) return '<span class="days-pill" style="color:#64748b">–</span>';
-  if (d < 0)   return `<span class="days-pill days-negative">${Math.abs(d)} วันที่แล้ว</span>`;
-  if (d <= 90) return `<span class="days-pill days-warn">${d} วัน</span>`;
+  if(d===null || d===undefined) return '<span class="days-pill" style="color:#64748b">–</span>';
+  if(d < 0) return `<span class="days-pill days-negative">${Math.abs(d)} วันที่แล้ว</span>`;
+  if(d <= 90) return `<span class="days-pill days-warn">${d} วัน</span>`;
   return `<span class="days-pill days-ok">${d} วัน</span>`;
 }
- 
+
 function renderTable() {
   const start = (currentPage-1)*pageSize;
-  const page  = filteredData.slice(start, start+pageSize);
-  document.getElementById('tableBody').innerHTML = page.map(d => `
-    <tr class="clickable" onclick="openDetail(${d._idx})">
+  const page = filteredData.slice(start, start+pageSize);
+  const tbody = document.getElementById('tableBody');
+  tbody.innerHTML = page.map((d,i) => `
+    <tr class="clickable" onclick="openDetail(${RAW_DATA.indexOf(d)})">
       <td>${d.no}</td>
       <td><div class="company-text"><span class="company-link">${d.company}</span></div></td>
       <td>${d.province}</td>
@@ -584,151 +449,236 @@ function renderTable() {
       <td>${getDaysText(d.days_left)}</td>
       <td>${getExpiryBadge(d.expiry_cat)}</td>
       <td class="price-text">${d.price>0?d.price.toLocaleString()+' ฿':'–'}</td>
-      <td style="color:#94a3b8">${d['งวด']||'–'}</td>
-    </tr>`).join('');
- 
-  const total      = filteredData.length;
+      <td style="color:#94a3b8">${d.งวด||'–'}</td>
+    </tr>
+  `).join('');
+  
+  const total = filteredData.length;
   const totalPages = Math.ceil(total/pageSize);
-  document.getElementById('pag-info').textContent =
-    `แสดง ${start+1}–${Math.min(start+pageSize,total)} จาก ${total} รายการ`;
+  document.getElementById('pag-info').textContent = `แสดง ${start+1}–${Math.min(start+pageSize,total)} จาก ${total} รายการ`;
   document.getElementById('btnPrev').disabled = currentPage === 1;
   document.getElementById('btnNext').disabled = currentPage >= totalPages;
- 
+  
+  // page buttons
   let pagHtml = '';
-  for (let i=1; i<=totalPages; i++) {
-    if (i===1||i===totalPages||Math.abs(i-currentPage)<=1)
+  for(let i=1;i<=totalPages;i++) {
+    if(i===1||i===totalPages||Math.abs(i-currentPage)<=1) {
       pagHtml += `<button class="${i===currentPage?'active':''}" onclick="goPage(${i})">${i}</button>`;
-    else if (Math.abs(i-currentPage)===2)
+    } else if(Math.abs(i-currentPage)===2) {
       pagHtml += `<button disabled style="border:none;background:transparent;color:#475569">...</button>`;
+    }
   }
   document.getElementById('pag-pages').innerHTML = pagHtml;
 }
- 
+
 function changePage(dir) { currentPage += dir; renderTable(); }
-function goPage(p)        { currentPage = p;   renderTable(); }
- 
-document.getElementById('searchInput').addEventListener('input',  applyFilters);
+function goPage(p) { currentPage = p; renderTable(); }
+
+document.getElementById('searchInput').addEventListener('input', applyFilters);
 document.getElementById('filterProvince').addEventListener('change', applyFilters);
-document.getElementById('filterExpiry').addEventListener('change',   applyFilters);
-document.getElementById('filterModel').addEventListener('change',    applyFilters);
- 
-// ---- Detail Page ----
+document.getElementById('filterExpiry').addEventListener('change', applyFilters);
+document.getElementById('filterModel').addEventListener('change', applyFilters);
+
 function openDetail(idx) {
-  const d = RAW_DATA.find(r => r._idx === idx);
+  const d = RAW_DATA[idx];
   const isReserve = d.contract_no === 'รถสำรองใช้งาน';
- 
+
+  // Header
   document.getElementById('detail-header-title').textContent = d.company;
-  document.getElementById('detail-header-sub').textContent   = `${d.province} · ${d.model} · ${d.new_used}`;
- 
+  document.getElementById('detail-header-sub').textContent = `${d.province} · ${d.model} · ${d.new_used}`;
+
+  // Status bar
   let statusClass='ok', statusIcon='✅', statusText='สัญญาปกติ', statusSub='';
-  if (isReserve) {
+  if(isReserve) {
     statusClass='reserve'; statusIcon='🔧'; statusText='รถสำรองใช้งาน'; statusSub='ไม่มีสัญญาเช่า';
-  } else if (d.expiry_cat==='หมดสัญญาแล้ว') {
+  } else if(d.expiry_cat==='หมดสัญญาแล้ว') {
     statusClass='expired'; statusIcon='🚨'; statusText='หมดสัญญาแล้ว';
     statusSub=`เกินกำหนดมา ${Math.abs(d.days_left)} วัน`;
-  } else if (d.expiry_cat==='ภายใน 3 เดือน') {
+  } else if(d.expiry_cat==='ภายใน 3 เดือน') {
     statusClass='soon3'; statusIcon='⚠️'; statusText='ใกล้หมดสัญญา — เร่งด่วน';
     statusSub=`เหลืออีก ${d.days_left} วัน (ภายใน 3 เดือน)`;
-  } else if (d.expiry_cat==='ภายใน 6 เดือน') {
+  } else if(d.expiry_cat==='ภายใน 6 เดือน') {
     statusClass='soon6'; statusIcon='🔔'; statusText='ใกล้หมดสัญญา';
     statusSub=`เหลืออีก ${d.days_left} วัน (ภายใน 6 เดือน)`;
-  } else if (d.days_left!==null) {
+  } else if(d.days_left!==null) {
     statusSub=`เหลืออีก ${d.days_left} วัน`;
   }
- 
+
+  // Contract progress
   let progressHtml = '';
-  if (!isReserve && d.start && d.end && d['งวด']>0) {
-    const totalDays = d['งวด']*30;
-    const usedDays  = totalDays-(d.days_left||0);
-    const pct = Math.min(100,Math.max(0,Math.round(usedDays/totalDays*100)));
-    const fillColor = d.expiry_cat==='หมดสัญญาแล้ว'?'#ef4444':
-                      d.expiry_cat==='ภายใน 3 เดือน'?'#f59e0b':
-                      d.expiry_cat==='ภายใน 6 เดือน'?'#f97316':'#22c55e';
-    progressHtml = `<div class="progress-wrap">
-      <div class="progress-label"><span>ระยะเวลาสัญญา ${d['งวด']} งวด</span><span>ผ่านไปแล้ว ${pct}%</span></div>
-      <div class="progress-bar"><div class="progress-fill" style="width:${pct}%;background:${fillColor}"></div></div>
-    </div>`;
+  if(!isReserve && d.start && d.end && d.งวด > 0) {
+    const totalDays = d.งวด * 30;
+    const usedDays = totalDays - (d.days_left || 0);
+    const pct = Math.min(100, Math.max(0, Math.round(usedDays / totalDays * 100)));
+    const fillColor = d.expiry_cat==='หมดสัญญาแล้ว' ? '#ef4444' :
+                      d.expiry_cat==='ภายใน 3 เดือน' ? '#f59e0b' :
+                      d.expiry_cat==='ภายใน 6 เดือน' ? '#f97316' : '#22c55e';
+    progressHtml = `
+      <div class="progress-wrap">
+        <div class="progress-label">
+          <span>ระยะเวลาสัญญา ${d.งวด} งวด</span>
+          <span>ผ่านไปแล้ว ${pct}%</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" style="width:${pct}%;background:${fillColor}"></div>
+        </div>
+      </div>
+    `;
   }
- 
-  const totalValue = d.price * d['งวด'];
+
+  // Total contract value
+  const totalValue = d.price * d.งวด;
+
   document.getElementById('detail-body').innerHTML = `
+
     <div class="detail-status-bar ${statusClass}">
       <div class="detail-status-icon">${statusIcon}</div>
-      <div><div class="detail-status-text">${statusText}</div>
-        ${statusSub?`<div class="detail-status-sub">${statusSub}</div>`:''}</div>
+      <div>
+        <div class="detail-status-text">${statusText}</div>
+        ${statusSub ? `<div class="detail-status-sub">${statusSub}</div>` : ''}
+      </div>
     </div>
+
     <div class="detail-section">
       <div class="detail-section-title">🏢 ข้อมูลบริษัท</div>
       <div class="detail-grid">
         <div class="detail-field" style="grid-column:1/-1">
-          <div class="field-label">ชื่อบริษัท</div><div class="field-value company-name">${d.company}</div>
+          <div class="field-label">ชื่อบริษัท</div>
+          <div class="field-value company-name">${d.company}</div>
         </div>
-        <div class="detail-field"><div class="field-label">จังหวัด</div><div class="field-value">📍 ${d.province||'–'}</div></div>
-        <div class="detail-field"><div class="field-label">สาขาที่ดูแล</div><div class="field-value">${d.branch||'–'}</div></div>
-        <div class="detail-field"><div class="field-label">Sales</div><div class="field-value">${d.sales||'–'}</div></div>
-        <div class="detail-field"><div class="field-label">ลำดับที่</div><div class="field-value">${d.no}</div></div>
+        <div class="detail-field">
+          <div class="field-label">จังหวัด</div>
+          <div class="field-value">📍 ${d.province||'–'}</div>
+        </div>
+        <div class="detail-field">
+          <div class="field-label">สาขาที่ดูแล</div>
+          <div class="field-value">${d.branch||'–'}</div>
+        </div>
+        <div class="detail-field">
+          <div class="field-label">Sales</div>
+          <div class="field-value">${d.sales||'–'}</div>
+        </div>
+        <div class="detail-field">
+          <div class="field-label">ลำดับที่</div>
+          <div class="field-value">${d.no}</div>
+        </div>
       </div>
     </div>
+
     <div class="detail-section">
-      <div class="detail-section-title">🚜 ข้อมูลรถ</div>
+      <div class="detail-section-title">ข้อมูลรถ</div>
       <div class="detail-grid">
-        <div class="detail-field"><div class="field-label">รุ่น (Model)</div>
-          <div class="field-value"><code style="background:#0f172a;padding:3px 10px;border-radius:6px;color:#7dd3fc;font-size:15px">${d.model||'–'}</code></div></div>
-        <div class="detail-field"><div class="field-label">ประเภท</div>
-          <div class="field-value"><span class="badge ${d.new_used==='NEW'?'badge-new':'badge-used'}" style="font-size:13px;padding:4px 12px">${d.new_used||'–'}</span></div></div>
-        <div class="detail-field"><div class="field-label">Mast</div><div class="field-value">${d.mast||'–'}</div></div>
-        <div class="detail-field"><div class="field-label">Forks</div><div class="field-value">${d.forks||'–'}</div></div>
-        <div class="detail-field"><div class="field-label">ยาง (Tire)</div><div class="field-value">${d.tire||'–'}</div></div>
-        <div class="detail-field"><div class="field-label">จำนวนยาง/ปี</div><div class="field-value">${d.tires_per_year||'–'} เส้น</div></div>
-        <div class="detail-field"><div class="field-label">อุปกรณ์เสริม</div><div class="field-value" style="color:#fbbf24">${d.accessories||'–'}</div></div>
-        <div class="detail-field"><div class="field-label">ชั่วโมงทำงาน/วัน</div><div class="field-value">${d.work_hours||'–'} ชม.</div></div>
-        <div class="detail-field"><div class="field-label">เลขตัวถัง</div>
-          <div class="field-value" style="font-family:monospace;color:#a78bfa;font-size:13px">${d.chassis_no||'–'}</div></div>
-        <div class="detail-field"><div class="field-label">เลขเครื่อง</div>
-          <div class="field-value" style="font-family:monospace;color:#a78bfa;font-size:13px">${d.engine_no||'–'}</div></div>
-        <div class="detail-field"><div class="field-label">เบอร์รถ</div>
-          <div class="field-value" style="font-size:20px;font-weight:800;color:#38bdf8">${d.car_no||'–'}</div></div>
-        <div class="detail-field"><div class="field-label">เลขที่สัญญา</div>
-          <div class="field-value" style="font-size:13px;color:#94a3b8">${d.contract_no||'–'}</div></div>
+        <div class="detail-field">
+          <div class="field-label">รุ่น (Model)</div>
+          <div class="field-value"><code style="background:#0f172a;padding:3px 10px;border-radius:6px;color:#7dd3fc;font-size:15px">${d.model||'–'}</code></div>
+        </div>
+        <div class="detail-field">
+          <div class="field-label">ประเภท</div>
+          <div class="field-value"><span class="badge ${d.new_used==='NEW'?'badge-new':'badge-used'}" style="font-size:13px;padding:4px 12px">${d.new_used||'–'}</span></div>
+        </div>
+        <div class="detail-field">
+          <div class="field-label">Mast</div>
+          <div class="field-value">${d.mast||'–'}</div>
+        </div>
+        <div class="detail-field">
+          <div class="field-label">Forks</div>
+          <div class="field-value">${d.forks||'–'}</div>
+        </div>
+        <div class="detail-field">
+          <div class="field-label">ยาง (Tire)</div>
+          <div class="field-value">${d.tire||'–'}</div>
+        </div>
+        <div class="detail-field">
+          <div class="field-label">จำนวนยาง/ปี</div>
+          <div class="field-value">${d.tires_per_year||'–'} เส้น</div>
+        </div>
+        <div class="detail-field">
+          <div class="field-label">อุปกรณ์เสริม</div>
+          <div class="field-value" style="color:#fbbf24">${d.accessories||'–'}</div>
+        </div>
+        <div class="detail-field">
+          <div class="field-label">ชั่วโมงทำงาน/วัน</div>
+          <div class="field-value">${d.work_hours||'–'} ชม.</div>
+        </div>
+        <div class="detail-field">
+          <div class="field-label">เลขตัวถัง</div>
+          <div class="field-value" style="font-family:monospace;color:#a78bfa;font-size:13px">${d.chassis_no||'–'}</div>
+        </div>
+        <div class="detail-field">
+          <div class="field-label">เลขเครื่อง</div>
+          <div class="field-value" style="font-family:monospace;color:#a78bfa;font-size:13px">${d.engine_no||'–'}</div>
+        </div>
+        <div class="detail-field">
+          <div class="field-label">เบอร์รถ</div>
+          <div class="field-value" style="font-size:20px;font-weight:800;color:#38bdf8">${d.car_no||'–'}</div>
+        </div>
+        <div class="detail-field">
+          <div class="field-label">เลขที่สัญญา</div>
+          <div class="field-value" style="font-size:13px;color:#94a3b8">${d.contract_no||'–'}</div>
+        </div>
       </div>
     </div>
+
     <div class="detail-section">
       <div class="detail-section-title">📅 ข้อมูลสัญญา</div>
       <div class="detail-grid">
-        <div class="detail-field"><div class="field-label">วันเริ่มสัญญา</div><div class="field-value">${d.start||'–'}</div></div>
-        <div class="detail-field"><div class="field-label">วันสิ้นสุดสัญญา</div><div class="field-value">${d.end||'–'}</div></div>
-        <div class="detail-field"><div class="field-label">จำนวนงวด</div><div class="field-value">${d['งวด']||'–'} งวด</div></div>
-        <div class="detail-field"><div class="field-label">วันคงเหลือ</div><div class="field-value">${getDaysText(d.days_left)}</div></div>
+        <div class="detail-field">
+          <div class="field-label">วันเริ่มสัญญา</div>
+          <div class="field-value">${d.start||'–'}</div>
+        </div>
+        <div class="detail-field">
+          <div class="field-label">วันสิ้นสุดสัญญา</div>
+          <div class="field-value">${d.end||'–'}</div>
+        </div>
+        <div class="detail-field">
+          <div class="field-label">จำนวนงวด</div>
+          <div class="field-value">${d.งวด||'–'} งวด</div>
+        </div>
+        <div class="detail-field">
+          <div class="field-label">วันคงเหลือ</div>
+          <div class="field-value">${getDaysText(d.days_left)}</div>
+        </div>
       </div>
       ${progressHtml}
     </div>
+
     <div class="detail-section">
       <div class="detail-section-title">💰 ข้อมูลการเงิน</div>
       <div class="detail-grid">
-        <div class="detail-field"><div class="field-label">ราคาเช่า / เดือน</div>
-          <div class="field-value highlight">${d.price>0?d.price.toLocaleString()+' ฿':'–'}</div></div>
-        <div class="detail-field"><div class="field-label">มูลค่าสัญญารวม</div>
-          <div class="field-value highlight" style="color:#4ade80">${totalValue>0?totalValue.toLocaleString()+' ฿':'–'}</div></div>
+        <div class="detail-field">
+          <div class="field-label">ราคาเช่า / เดือน</div>
+          <div class="field-value highlight">${d.price>0?d.price.toLocaleString()+' ฿':'–'}</div>
+        </div>
+        <div class="detail-field">
+          <div class="field-label">มูลค่าสัญญารวม</div>
+          <div class="field-value highlight" style="color:#4ade80">${totalValue>0?totalValue.toLocaleString()+' ฿':'–'}</div>
+        </div>
       </div>
     </div>
-    <div style="height:40px"></div>`;
- 
+
+    <div style="height:40px"></div>
+  `;
+
   document.getElementById('detailPage').classList.add('active');
+  history.pushState({detail: true}, '');
   window.scrollTo(0,0);
 }
- 
-function closDetail() { document.getElementById('detailPage').classList.remove('active'); }
+
+function closDetail() {
+  document.getElementById('detailPage').classList.remove('active');
+  history.back();
+}
+
+window.addEventListener('popstate', function() {
+  if (document.getElementById('detailPage').classList.contains('active')) {
+    document.getElementById('detailPage').classList.remove('active');
+  }
+});
+
+// Back button / swipe support
 document.addEventListener('keydown', e => { if(e.key==='Escape') closDetail(); });
- 
+
 populateFilters();
-renderTable();
- 
-} // end initDashboard
- 
-// ============================================================
-//  START
-// ============================================================
-loadFromSheet();
-</script>
+renderTable();</script>
 </body>
 </html>
