@@ -315,40 +315,112 @@
 </div>
 
 <script>
-// --- ส่วนที่แก้ไข: ดึงข้อมูลจาก Google Sheets แทนการ Hard-code ---
+// ============================================================
+//  CONFIG
+// ============================================================
+const SHEET_ID   = '1iFWpgZBXHa93M6iTlI5Xce4jTJVEy374tBDtHMKyCZI';
+const SHEET_NAME = 'Sheet1';
 
-// ใส่ URL ของ Web App ที่ได้จากการ Deploy Google Apps Script
-const SCRIPT_URL = "YOUR_GOOGLE_APPS_SCRIPT_URL_HERE"; 
+// ============================================================
+//  Loading Overlay
+// ============================================================
+document.body.insertAdjacentHTML('afterbegin', `
+  <div id="loadingOverlay" style="
+    position:fixed;inset:0;z-index:9999;background:#0f172a;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;">
+    <div style="width:48px;height:48px;border:4px solid #334155;border-top-color:#3b82f6;
+      border-radius:50%;animation:spin 0.8s linear infinite"></div>
+    <div style="color:#94a3b8;font-size:14px">กำลังโหลดข้อมูลจาก Google Sheet...</div>
+    <style>@keyframes spin{to{transform:rotate(360deg)}}</style>
+  </div>`);
 
-let RAW_DATA = [];
+// ============================================================
+//  Helpers
+// ============================================================
+function gvizDateToThai(val) {
+  if (typeof val === 'string' && val.startsWith('Date(')) {
+    const [y,m,d] = val.slice(5,-1).split(',').map(Number);
+    return `${String(d).padStart(2,'0')}/${String(m+1).padStart(2,'0')}/${y}`;
+  }
+  return val ?? '';
+}
 
-async function loadDataFromSheet() {
-  const loadingElement = document.createElement('div');
-  loadingElement.style.textAlign = 'center';
-  loadingElement.style.padding = '20px';
-  loadingElement.innerText = "กำลังโหลดข้อมูลจาก Google Sheets...";
-  document.getElementById('cardContainer').appendChild(loadingElement);
+function cellVal(row, idx) {
+  const cell = row.c?.[idx];
+  if (!cell || cell.v === null || cell.v === undefined) return '';
+  const v = cell.v;
+  if (typeof v === 'string' && v.startsWith('Date(')) return gvizDateToThai(v);
+  if (cell.f && typeof cell.f === 'string') return cell.f;
+  return String(v);
+}
 
+function calcDaysLeft(endStr) {
+  if (!endStr) return null;
+  const p = endStr.split('/');
+  if (p.length !== 3) return null;
+  const d = new Date(`${p[2]}-${p[1].padStart(2,'0')}-${p[0].padStart(2,'0')}`);
+  if (isNaN(d)) return null;
+  const today = new Date(); today.setHours(0,0,0,0);
+  return Math.round((d - today) / 86400000);
+}
+
+function calcExpiryCat(days) {
+  if (days === null) return 'ไม่ระบุ';
+  if (days < 0)    return 'หมดสัญญาแล้ว';
+  if (days <= 90)  return 'ภายใน 3 เดือน';
+  if (days <= 180) return 'ภายใน 6 เดือน';
+  return 'มากกว่า 6 เดือน';
+}
+
+// ============================================================
+//  Fetch จาก Google Sheet
+// ============================================================
+async function loadFromSheet() {
+  const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(SHEET_NAME)}`;
   try {
-    const response = await fetch(SCRIPT_URL);
-    const data = await response.json();
-    
-    // แทนที่ข้อมูลเดิมด้วยข้อมูลที่โหลดมาได้
-    RAW_DATA = data;
-    
-    // ล้างข้อความ Loading แล้วแสดงผลหน้าจอ
-    document.getElementById('cardContainer').innerHTML = "";
-    init(); // เรียกฟังก์ชันเดิมที่มีอยู่แล้วเพื่อวาดหน้าจอ
-  } catch (error) {
-    console.error("Error loading data:", error);
-    document.getElementById('cardContainer').innerHTML = "<p style='color:red; text-align:center;'>ไม่สามารถโหลดข้อมูลได้ กรุณาตรวจสอบการตั้งค่า Web App</p>";
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const text = await res.text();
+    const jsonStr = text.replace(/^[\s\S]*?setResponse\(/, '').replace(/\);?\s*$/, '');
+    const json = JSON.parse(jsonStr);
+
+    // อ่านชื่อ column จาก Sheet header โดยตรง
+    const cols = json.table.cols.map(c => c.label.trim());
+
+    const RAW_DATA = (json.table.rows || [])
+      .filter(row => row.c && row.c.some(cell => cell?.v !== null && cell?.v !== ''))
+      .map((row, idx) => {
+        const obj = { _idx: idx };
+        cols.forEach((col, i) => { if (col) obj[col] = cellVal(row, i); });
+        // คำนวณ days_left + expiry_cat ใหม่ทุกครั้ง (สดจาก Sheet)
+        const days = calcDaysLeft(obj.end);
+        obj.days_left  = days;
+        obj.expiry_cat = calcExpiryCat(days);
+        obj.price  = Number(String(obj.price  || '').replace(/,/g,'')) || 0;
+        obj['งวด'] = Number(String(obj['งวด'] || '').replace(/,/g,'')) || 0;
+        return obj;
+      });
+
+    document.getElementById('loadingOverlay').remove();
+    initDashboard(RAW_DATA);
+
+  } catch(e) {
+    document.getElementById('loadingOverlay').innerHTML = `
+      <div style="color:#f87171;font-size:18px;font-weight:700">❌ โหลดข้อมูลไม่สำเร็จ</div>
+      <div style="color:#94a3b8;font-size:13px;max-width:380px;text-align:center;line-height:1.8;margin-top:4px">
+        ${e.message}<br>กรุณาตรวจสอบว่า Google Sheet ถูกตั้งค่าเป็น<br>
+        <b style="color:#fbbf24">"Anyone with the link — Viewer"</b>
+      </div>
+      <button onclick="location.reload()" style="margin-top:12px;background:#3b82f6;color:#fff;
+        border:none;border-radius:8px;padding:10px 28px;font-size:14px;cursor:pointer">🔄 ลองใหม่</button>`;
   }
 }
 
-// เรียกใช้งานเมื่อเปิดหน้าเว็บ
-window.onload = loadDataFromSheet;
+// ============================================================
+//  Dashboard หลัก (รับ RAW_DATA จาก Sheet)
+// ============================================================
+function initDashboard(RAW_DATA) {
 
-// หมายเหตุ: ส่วนฟังก์ชัน renderCards, showDetail, filterData ฯลฯ ให้คงไว้เหมือนเดิม
 // Exclude reserve cars from main stats
 const DATA = RAW_DATA.filter(d => d.contract_no !== 'รถสำรองใช้งาน');
 const RESERVE = RAW_DATA.filter(d => d.contract_no === 'รถสำรองใช้งาน');
@@ -472,7 +544,7 @@ function renderTable() {
   const page = filteredData.slice(start, start+pageSize);
   const tbody = document.getElementById('tableBody');
   tbody.innerHTML = page.map((d,i) => `
-    <tr class="clickable" onclick="openDetail(${RAW_DATA.indexOf(d)})">
+    <tr class="clickable" onclick="openDetail(${d._idx})">
       <td>${d.no}</td>
       <td><div class="company-text"><span class="company-link">${d.company}</span></div></td>
       <td>${d.province}</td>
@@ -513,7 +585,7 @@ document.getElementById('filterExpiry').addEventListener('change', applyFilters)
 document.getElementById('filterModel').addEventListener('change', applyFilters);
 
 function openDetail(idx) {
-  const d = RAW_DATA[idx];
+  const d = RAW_DATA.find(r => r._idx === idx);
   const isReserve = d.contract_no === 'รถสำรองใช้งาน';
 
   // Header
@@ -712,6 +784,8 @@ window.addEventListener('popstate', function() {
 document.addEventListener('keydown', e => { if(e.key==='Escape') closDetail(); });
 
 populateFilters();
-renderTable();</script>
-</body>
-</html>
+renderTable();
+} // end initDashboard
+
+loadFromSheet();
+</script>
