@@ -532,6 +532,7 @@ function renderDashboard() {
       return `
         <div class="alert-row" onclick="openDetail(${d._idx})">
           <span>${d.company || '-'}</span>
+          <span>${d.contract_no || '-'}</span>
           <span>${d.province || '-'}</span>
           <span>${d.end || '-'}</span>
           <span>${dayText}</span>
