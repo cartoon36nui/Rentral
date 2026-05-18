@@ -518,7 +518,6 @@ function renderDashboard() {
     const header = `
       <div class="alert-header">
         <span>บริษัท</span>
-        <span>เลขตัวถัง</span>
         <span>จังหวัด</span>
         <span>วันหมด</span>
         <span>สถานะ</span>
@@ -532,7 +531,6 @@ function renderDashboard() {
       return `
         <div class="alert-row" onclick="openDetail(${d._idx})">
           <span>${d.company || '-'}</span>
-          <span>${d.contract_no || '-'}</span>
           <span>${d.province || '-'}</span>
           <span>${d.end || '-'}</span>
           <span>${dayText}</span>
