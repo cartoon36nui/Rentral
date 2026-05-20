@@ -42,16 +42,19 @@
   .alert-box.warn .alert-title { color: #fcd34d; }
   .alert-list { margin-top: 6px; font-size: 12px; color: #94a3b8; line-height: 1.6; }
 
-  /* ★ Alert grid: 5 columns now (company | province | chassis | end-date | status) */
+  /* ★ Alert grid: 6 columns (company | province | chassis | start | end | status) */
   .alert-header,
   .alert-row {
     font-family: monospace;
     display: grid;
-    grid-template-columns: 1fr 90px 150px 110px 130px;
+    grid-template-columns: 1fr 90px 150px 105px 105px 130px;
     gap: 10px;
     align-items: center;
     padding: 3px 0;
+    text-align: center;
   }
+  .alert-header span:first-child,
+  .alert-row   span:first-child { text-align: left; }
   .alert-header { font-weight: bold; color: #94a3b8; margin-bottom: 6px; }
   .alert-row { cursor: pointer; transition: all 0.15s ease; }
   .alert-row:hover { opacity: 0.85; text-decoration: underline; }
@@ -149,8 +152,9 @@
     td, th { padding: 8px 10px; }
     .detail-body { padding: 14px; }
     .detail-grid { grid-template-columns: repeat(2, 1fr); }
-    .alert-header, .alert-row { grid-template-columns: 1fr 80px 100px 90px; }
-    .alert-header span:nth-child(3), .alert-row span:nth-child(3) { display: none; }
+    .alert-header, .alert-row { grid-template-columns: 1fr 80px 95px 110px; }
+    .alert-header span:nth-child(3), .alert-row span:nth-child(3),
+    .alert-header span:nth-child(4), .alert-row span:nth-child(4) { display: none; }
   }
 </style>
 </head>
@@ -211,7 +215,8 @@
             <th>บริษัท</th>
             <th>จังหวัด</th>
             <th>รุ่น</th>
-            <th>เลขตัวถัง</th><!-- ★ NEW -->
+            <th>เลขตัวถัง</th>
+            <th>วันเริ่มสัญญา</th><!-- ★ NEW -->
             <th>ประเภท</th>
             <th>วันหมดสัญญา</th>
             <th>คงเหลือ</th>
@@ -318,7 +323,13 @@ async function loadFromSheet() {
     const text = await res.text();
     const json = JSON.parse(text.replace(/^[\s\S]*?setResponse\(/,'').replace(/\);\s*$/,''));
     const cols = json.table.cols.map(c=>c.label.trim());
+    console.log('📋 Column names from Sheet:', cols);
     const rentalDaysIdx = cols.findIndex(c=>c.toLowerCase().includes('number of rental days'));
+
+    // fuzzy-find start / end date columns by common patterns
+    const startIdx = cols.findIndex(c=> /^start/i.test(c) || /วันเริ่ม/i.test(c) || /start.?date/i.test(c));
+    const endIdx   = cols.findIndex(c=> /^end/i.test(c)   || /วันหมด/i.test(c)   || /end.?date/i.test(c)   || /วันสิ้นสุด/i.test(c));
+    console.log(`🗓 startIdx=${startIdx} (${cols[startIdx]})  endIdx=${endIdx} (${cols[endIdx]})`);
 
     G_DATA = (json.table.rows||[])
       .filter(row=>row.c&&row.c.some(c=>c?.v!==null&&c?.v!==''))
@@ -328,6 +339,9 @@ async function loadFromSheet() {
           if (!col) return;
           obj[i===rentalDaysIdx ? 'rental_days_to_date' : col] = i===rentalDaysIdx ? cellRaw(row,i) : cellVal(row,i);
         });
+        // guarantee obj.start / obj.end regardless of exact column label
+        if (startIdx>=0 && !obj.start) obj.start = cellVal(row, startIdx);
+        if (endIdx>=0   && !obj.end)   obj.end   = cellVal(row, endIdx);
         const days=daysLeft(obj.end);
         obj.days_left  = days;
         obj.expiry_cat = expiryCat(days);
@@ -362,7 +376,7 @@ function renderDashboard() {
   function buildList(data) {
     if (!data.length) return '';
     const header = `<div class="alert-header">
-      <span>บริษัท</span><span>จังหวัด</span><span>เลขตัวถัง</span><span>วันหมด</span><span>สถานะ</span>
+      <span>บริษัท</span><span>จังหวัด</span><span>เลขตัวถัง</span><span>วันเริ่ม</span><span>วันหมด</span><span>สถานะ</span>
     </div>`;
     const rows = data.map(d => {
       const dayText = d.days_left==null ? '-'
@@ -375,6 +389,7 @@ function renderDashboard() {
         <span>${d.company||'-'}</span>
         <span>${d.province||'-'}</span>
         <span>${chassisHtml}</span>
+        <span>${d.start||'–'}</span>
         <span>${d.end||'-'}</span>
         <span>${dayText}</span>
       </div>`;
@@ -461,6 +476,7 @@ function renderTable() {
       <td>${d.province}</td>
       <td><code style="background:#0f172a;padding:2px 6px;border-radius:4px;font-size:11px;color:#7dd3fc">${d.model}</code></td>
       <td><span style="font-family:monospace;font-size:11px;color:#a78bfa">${d.chassis_no||'–'}</span></td>
+      <td style="font-size:12px;color:#94a3b8">${d.start||'–'}</td>
       <td><span class="badge ${d.new_used==='NEW'?'badge-new':'badge-used'}">${d.new_used}</span></td>
       <td style="font-size:12px;color:#94a3b8">${d.end||'–'}</td>
       <td>${daysText(d.days_left)}</td>
