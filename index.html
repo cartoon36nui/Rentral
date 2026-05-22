@@ -42,7 +42,7 @@
   .alert-box.warn .alert-title { color: #fcd34d; }
   .alert-list { margin-top: 6px; font-size: 12px; color: #94a3b8; line-height: 1.6; }
 
-  /* ★ Alert grid: 6 columns (company | province | chassis | start | end | status) */
+  /* Alert grid: 6 columns (company | province | chassis | start | end | status) */
   .alert-header,
   .alert-row {
     font-family: monospace;
@@ -216,9 +216,8 @@
             <th>จังหวัด</th>
             <th>รุ่น</th>
             <th>เลขตัวถัง</th>
-            <th>วันเริ่มสัญญา</th><!-- ★ NEW -->
-                      <th>ประเภท</th>
-           <th>วันหมดสัญญา</th>
+            <th>วันเริ่มสัญญา</th>
+            <th>วันหมดสัญญา</th>
             <th>คงเหลือ</th>
             <th>สถานะ</th>
             <th>ราคา/เดือน</th>
@@ -244,6 +243,9 @@ const SHEET_ID   = '1iFWpgZBXHa93M6iTlI5Xce4jTJVEy374tBDtHMKyCZI';
 const SHEET_NAME = 'Sheet1';
 let G_DATA = [], G_filtered = [], G_page = 1;
 const PAGE_SIZE = 15;
+
+// Track whether detail page is open (for back button handling)
+let detailIsOpen = false;
 
 document.body.insertAdjacentHTML('afterbegin', `
   <div id="loadingOverlay" style="position:fixed;inset:0;z-index:9999;background:#0f172a;
@@ -372,7 +374,6 @@ function renderDashboard() {
   const expired = DATA.filter(d=>d.expiry_cat==='หมดสัญญาแล้ว');
   const soon3   = DATA.filter(d=>d.expiry_cat==='ภายใน 3 เดือน');
 
-  /* ★ buildList — now with chassis column */
   function buildList(data) {
     if (!data.length) return '';
     const header = `<div class="alert-header">
@@ -469,6 +470,7 @@ function renderTable() {
   const start=(G_page-1)*PAGE_SIZE;
   const page=G_filtered.slice(start,start+PAGE_SIZE);
 
+  // ★ ลบคอลัมน์ประเภท (new_used) ออกจากตาราง
   document.getElementById('tableBody').innerHTML = page.map(d=>`
     <tr class="clickable" onclick="openDetail(${d._idx})">
       <td>${d.no}</td>
@@ -477,7 +479,6 @@ function renderTable() {
       <td><code style="background:#0f172a;padding:2px 6px;border-radius:4px;font-size:11px;color:#7dd3fc">${d.model}</code></td>
       <td><span style="font-family:monospace;font-size:11px;color:#a78bfa">${d.chassis_no||'–'}</span></td>
       <td style="font-size:12px;color:#94a3b8">${d.start||'–'}</td>
-      <td><span class="badge ${d.new_used==='NEW'?'badge-new':'badge-used'}">${d.new_used}</span></td>
       <td style="font-size:12px;color:#94a3b8">${d.end||'–'}</td>
       <td>${daysText(d.days_left)}</td>
       <td>${expiryBadge(d.expiry_cat)}</td>
@@ -595,17 +596,33 @@ function openDetail(idx) {
     </div>
     <div style="height:40px"></div>`;
 
+  // ★ Push state only if not already open (prevents double-push)
+  if (!detailIsOpen) {
+    history.pushState({detail:true, idx:idx},'');
+    detailIsOpen = true;
+  } else {
+    // Replace state with new idx if re-opening from alert while detail already shown
+    history.replaceState({detail:true, idx:idx},'');
+  }
+
   document.getElementById('detailPage').classList.add('active');
-  history.pushState({detail:true},'');
-  window.scrollTo(0,0);
+  document.getElementById('detailPage').scrollTop = 0;
 }
 
 function closDetail() {
   document.getElementById('detailPage').classList.remove('active');
-  if (history.state?.detail) history.back();
+  detailIsOpen = false;
 }
-window.addEventListener('popstate',()=>{document.getElementById('detailPage').classList.remove('active');});
-document.addEventListener('keydown',e=>{if(e.key==='Escape') closDetail();});
+
+// ★ Handle browser/phone back button
+window.addEventListener('popstate', function(e) {
+  if (document.getElementById('detailPage').classList.contains('active')) {
+    document.getElementById('detailPage').classList.remove('active');
+    detailIsOpen = false;
+  }
+});
+
+document.addEventListener('keydown',e=>{if(e.key==='Escape') { closDetail(); if (detailIsOpen) history.back(); }});
 
 loadFromSheet();
 </script>
